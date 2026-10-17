@@ -1,0 +1,9 @@
+﻿=== START 2026-10-17T11:33:27.1327091+01:00 ===
+--- validate package.json ---
+package.json OK
+
+--- status ---
+ M package.json
+?? redeploy-log.txt
+?? redeploy.ps1
+
