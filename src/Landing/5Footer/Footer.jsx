@@ -38,15 +38,15 @@ export default function Footer() {
                     <div className="footer-block">
                         <p className="footer-label">Phone Number</p>
                         <p className="footer-text">
-                            <a href="tel:+2348038607740">+234 803 860 7740</a>
+                            <a href="tel:+2348106840286">+234 810 684 0286</a>
                         </p>
                     </div>
 
                     <div className="footer-block">
                         <p className="footer-label">Email Address:</p>
                         <p className="footer-text">
-                            <a href="mailto:PenWorldglobal@gmail.com">
-                                PenWorldglobal@gmail.com
+                            <a href="mailto:penworld.yoursmile@gmail.com">
+                                penworld.yoursmile@gmail.com
                             </a>
                         </p>
                     </div>
