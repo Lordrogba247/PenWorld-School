@@ -1,6 +1,6 @@
 ﻿import "./Hero.css";
 // Add these imports at the very top of your component file
-import PenWorldImage from '../../assets/PenWorldimage.png';
+import PenWorldImage from '../../assets/heroesimage.png';
 import instillImage from '../../assets/instill.png';
 import ensureImage from '../../assets/ensure.png';
 import encourageImage from '../../assets/encourage.png';
@@ -62,3 +62,4 @@ export default function Hero() {
         </section>
     );
 }
+
