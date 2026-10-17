@@ -1,5 +1,0 @@
-﻿ D do-push.ps1
- D push-log.txt
- M src/Landing/2Hero/Hero.jsx
-
-=== ADD + COMMIT ===
