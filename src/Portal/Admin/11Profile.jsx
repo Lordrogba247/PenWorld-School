@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import "./11Profile.css";
 
 const BASE_URL = "https://heroesschool-management-backend.vercel.app";
@@ -186,3 +186,4 @@ export default function AdminProfile() {
         </div>
     );
 }
+

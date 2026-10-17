@@ -1,4 +1,4 @@
-import "./Terms.css";
+﻿import "./Terms.css";
 
 export default function Terms() {
     return (
@@ -8,7 +8,7 @@ export default function Terms() {
                 <p className="terms-effective">Effective Date: 15th June, 2026</p>
 
                 <p className="terms-intro">
-                    Welcome to the Heroes College website and student portal. By
+                    Welcome to the PenWorld College website and student portal. By
                     accessing or using our website, CBT system, or result-checking
                     portal, you agree to comply with these Terms of Use.
                 </p>
@@ -64,7 +64,7 @@ export default function Terms() {
                     <h2>6. Intellectual Property</h2>
                     <p>
                         All content on this website, including logos, text, exam
-                        materials, and software, belongs to Heroes College unless
+                        materials, and software, belongs to PenWorld College unless
                         otherwise stated. Users may not copy or distribute materials
                         without permission.
                     </p>
@@ -72,7 +72,7 @@ export default function Terms() {
 
                 <section className="terms-section">
                     <h2>7. Limitation of Liability</h2>
-                    <p>Heroes College is not liable for:</p>
+                    <p>PenWorld College is not liable for:</p>
                     <ul>
                         <li>Temporary website downtime</li>
                         <li>Technical errors during CBT exams</li>
@@ -94,7 +94,7 @@ export default function Terms() {
                 <section className="terms-section">
                     <h2>9. Modification of Terms</h2>
                     <p>
-                        Heroes College reserves the right to update these Terms at any
+                        PenWorld College reserves the right to update these Terms at any
                         time. Continued use of the website implies acceptance of the
                         updated terms.
                     </p>
@@ -104,17 +104,17 @@ export default function Terms() {
                     <h2>10. Contact Information</h2>
                     <p>For inquiries or complaints:</p>
 
-                    <p className="terms-address-label">Heroes College &amp; Primary School, Gaa-Akanbi Address</p>
+                    <p className="terms-address-label">PenWorld College &amp; Primary School, Gaa-Akanbi Address</p>
                     <p>
                         No 84, Gaa-Akanbi Road, Behind Erin-Ile Junction, Ilorin, Kwara
                         State, Nigeria (College &amp; Primary School)
                     </p>
 
-                    <p className="terms-address-label">Heroes College Amoyo Address</p>
+                    <p className="terms-address-label">PenWorld College Amoyo Address</p>
                     <p>Redemption Road, Gbagede, Amoyo, Kwara State, Nigeria (College Only)</p>
 
                     <p className="terms-contact-line">
-                        Email: <a href="mailto:heroesglobal@gmail.com">heroesglobal@gmail.com</a>
+                        Email: <a href="mailto:PenWorldglobal@gmail.com">PenWorldglobal@gmail.com</a>
                     </p>
                     <p className="terms-contact-line">
                         Phone Number: <a href="tel:+2348038607740">+234 803 860 7740</a>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+﻿import { useState, useEffect, useCallback } from "react";
 import { normalizeClassesPayload } from "./useClasses.jsx";
 
 const BASE_URL = "https://heroesschool-management-backend.vercel.app";
@@ -55,3 +55,4 @@ export function useStudentMeta() {
         refetch: () => fetchMeta(true),
     };
 }
+

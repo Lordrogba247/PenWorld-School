@@ -1,4 +1,4 @@
-import axios from "axios";
+﻿import axios from "axios";
 
 // ===== Base axios instance =====
 const api = axios.create({
@@ -29,3 +29,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+

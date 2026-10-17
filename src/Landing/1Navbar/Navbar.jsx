@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import "./Navbar.css";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import logo from "../../assets/logo2.png"; // drop your exported Figma logo here
@@ -26,9 +26,9 @@ export default function Navbar() {
         <header className="navbar">
             <div className="navbar-inner">
                 <a href="/" className="navbar-brand">
-                    <img src={logo} alt="Heroes College logo" className="navbar-logo" />
+                    <img src={logo} alt="PenWorld College logo" className="navbar-logo" />
                     <div className="navbar-titles">
-                        <span className="navbar-title">Heroes College</span>
+                        <span className="navbar-title">PenWorld College</span>
                         <span className="navbar-subtitle">&amp; Primary School</span>
                     </div>
                 </a>

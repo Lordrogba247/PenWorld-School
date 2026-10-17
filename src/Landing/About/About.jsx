@@ -1,7 +1,7 @@
-import "./About.css";
+﻿import "./About.css";
 import groupPhoto1 from "../../assets/group2.png";
 import groupPhoto2 from "../../assets/group1.png";
-import proprietorPhoto from "../../assets/oga1.png";
+import proprietorPhoto from "../../assets/oga1.jpeg";
 
 export default function About() {
     return (
@@ -14,8 +14,8 @@ export default function About() {
                 <div className="about-top">
                     <div className="about-top-text">
                         <p>
-                            Heroes College was founded in April 2014 by Mr. and Mrs.
-                            Tunde Bakare with a clear vision to cultivate God-fearing,
+                            PenWorld College was founded in April 2014 by Mr. and Mrs.
+                            David Mobolaji with a clear vision to cultivate God-fearing,
                             disciplined, and academically excellent leaders who will
                             serve God and humanity. The school was established to
                             nurture students into diligent, hardworking individuals
@@ -24,7 +24,7 @@ export default function About() {
                         </p>
                         <p>
                             The college officially commenced operations on October 15,
-                            2014, beginning its journey at Heroes International
+                            2014, beginning its journey at PenWorld International
                             School, Gaa-Akanbi, Ilorin, with just thirteen students
                             and a committed team of four staff members under the
                             leadership of Principal Mr. Adekeye Temitope. By 2015,
@@ -35,8 +35,8 @@ export default function About() {
                     </div>
 
                     <div className="about-top-images">
-                        <img src={groupPhoto2} alt="Heroes College students group photo" />
-                        <img src={groupPhoto1} alt="Heroes College students event photo" />
+                        <img src={groupPhoto2} alt="PenWorld College students group photo" />
+                        <img src={groupPhoto1} alt="PenWorld College students event photo" />
                     </div>
                 </div>
 
@@ -44,13 +44,13 @@ export default function About() {
                     <div className="about-proprietor-col">
                         <img
                             src={proprietorPhoto}
-                            alt="Mr. Olatunde Bakare, Proprietor"
+                            alt="Mr. David Mobolaji, Proprietor"
                             className="about-proprietor-photo"
                         />
                         <div className="about-proprietor-caption">
-                            <p className="about-proprietor-name">Mr. Olatunde Bakare</p>
+                            <p className="about-proprietor-name">Mr. David Mobolaji</p>
                             <p className="about-proprietor-role">
-                                Proprietor, Heroes College &amp; Primary School
+                                Proprietor, PenWorld College &amp; Primary School
                             </p>
                         </div>
                     </div>
@@ -60,14 +60,14 @@ export default function About() {
                             In September 2015, approval was granted by inspectors
                             from the Ministry of Education for the conduct of WASSCE
                             and NECO Senior Examinations, further strengthening the
-                            institution's credibility. Since then, Heroes College
+                            institution's credibility. Since then, PenWorld College
                             has consistently recorded excellent results in both
                             state and SSCE examinations, reflecting its commitment
                             to academic excellence and character development.
                         </p>
                         <p>
-                            Guided by the vision of its proprietor, Tunde Bakare,
-                            Heroes College continues to uphold a nurturing
+                            Guided by the vision of its proprietor, David Mobolaji,
+                            PenWorld College continues to uphold a nurturing
                             environment where students are encouraged to unlock
                             their potential, embrace challenges, and grow into
                             confident leaders. The school remains dedicated to
@@ -76,7 +76,7 @@ export default function About() {
                             to become a "hero" in their own story.
                         </p>
                         <p>
-                            At Heroes College, we remain committed to shaping lives
+                            At PenWorld College, we remain committed to shaping lives
                             for excellence, service, and lasting impact—all for the
                             glory of God.
                         </p>
@@ -114,7 +114,7 @@ export default function About() {
                         <div>
                             <h2>Our Vision</h2>
                             <p>
-                                To raise a generation of heroes—faith-driven,
+                                To raise a generation of PenWorld—faith-driven,
                                 compassionate, and committed to making a positive
                                 impact in the world.
                             </p>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "./AdminLayout.css";
 import logo from "../../assets/logo2.png";
@@ -147,9 +147,9 @@ export default function AdminLayout() {
                         <span /><span /><span />
                     </button>
                     <NavLink to="/" className="adl-brand">
-                        <img src={logo} alt="Heroes College" className="adl-brand-logo" />
+                        <img src={logo} alt="PenWorld College" className="adl-brand-logo" />
                         <div className="adl-brand-titles">
-                            <span className="adl-brand-name">Heroes College</span>
+                            <span className="adl-brand-name">PenWorld College</span>
                             <span className="adl-brand-sub">&amp; Primary School</span>
                         </div>
                     </NavLink>

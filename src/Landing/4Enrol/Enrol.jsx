@@ -1,4 +1,4 @@
-import "./Enrol.css";
+﻿import "./Enrol.css";
 import boyImage from '../../assets/boy.png';
 import girlImage from '../../assets/girl.png';
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -13,7 +13,7 @@ export default function Enrol() {
                     </h2>
 
                     <p className="enrol-text">
-                        Heroes College &amp; Primary School is not only an excellent
+                        PenWorld College &amp; Primary School is not only an excellent
                         choice but the right foundation for your child's academic and
                         personal growth.
                     </p>
@@ -30,14 +30,14 @@ export default function Enrol() {
                     <div className="enrol-backdrop enrol-backdrop-red" />
                     <img
                         src={boyImage}
-                        alt="Heroes College student in classroom"
+                        alt="PenWorld College student in classroom"
                         className="enrol-photo enrol-photo-1"
                     />
 
                     <div className="enrol-backdrop enrol-backdrop-navy" />
                     <img
                         src={girlImage}
-                        alt="Heroes College student portrait"
+                        alt="PenWorld College student portrait"
                         className="enrol-photo enrol-photo-2"
                     />
                 </div>

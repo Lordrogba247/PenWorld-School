@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./1Login.css";
 import logo from "../../assets/logo2.png";
@@ -67,9 +67,9 @@ export default function AdminLogin() {
     return (
         <div className="sl-page">
             <Link to="/" className="sl-brand">
-                <img src={logo} alt="Heroes College logo" className="sl-brand-logo" />
+                <img src={logo} alt="PenWorld College logo" className="sl-brand-logo" />
                 <div className="sl-brand-titles">
-                    <span className="sl-brand-name">Heroes College</span>
+                    <span className="sl-brand-name">PenWorld College</span>
                     <span className="sl-brand-sub">&amp; Primary School</span>
                 </div>
             </Link>
@@ -133,3 +133,4 @@ export default function AdminLogin() {
         </div>
     );
 }
+

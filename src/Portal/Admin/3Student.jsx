@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import "./3Student.css";
 import AddStudentModal from "./4Add";
 import { useMeta } from "../../hooks/useMeta";
@@ -374,3 +374,4 @@ function ResetPasswordModal({ student, token, onClose }) {
         </div>
     );
 }
+

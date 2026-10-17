@@ -1,4 +1,4 @@
-import "./Footer.css";
+﻿import "./Footer.css";
 import logo from "../../assets/logo3.png"; // same logo used in the Navbar
 import { Link } from "react-router-dom";
 export default function Footer() {
@@ -8,9 +8,9 @@ export default function Footer() {
                 {/* Brand + addresses */}
                 <div className="footer-col">
                     <div className="footer-brand">
-                        <img src={logo} alt="Heroes College logo" className="footer-logo" />
+                        <img src={logo} alt="PenWorld College logo" className="footer-logo" />
                         <div className="footer-brand-titles">
-                            <span className="footer-brand-title">Heroes College</span>
+                            <span className="footer-brand-title">PenWorld College</span>
                             <span className="footer-brand-subtitle">& Primary School</span>
                         </div>
                     </div>
@@ -45,8 +45,8 @@ export default function Footer() {
                     <div className="footer-block">
                         <p className="footer-label">Email Address:</p>
                         <p className="footer-text">
-                            <a href="mailto:heroesglobal@gmail.com">
-                                heroesglobal@gmail.com
+                            <a href="mailto:PenWorldglobal@gmail.com">
+                                PenWorldglobal@gmail.com
                             </a>
                         </p>
                     </div>
@@ -97,7 +97,7 @@ export default function Footer() {
 
             <div className="footer-bottom">
                 <p className="footer-copyright">
-                    © {new Date().getFullYear()} Heroes College &amp; Primary School
+                    © {new Date().getFullYear()} PenWorld College &amp; Primary School
                 </p>
                 <div className="footer-legal-links">
                     <Link to="/privacy-policy">Privacy Policy</Link>

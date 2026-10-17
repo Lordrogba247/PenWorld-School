@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "./StaffLayout.css";
 import logo from "../../assets/logo2.png";
@@ -122,9 +122,9 @@ export default function StaffLayout() {
                         <span /><span /><span />
                     </button>
                     <NavLink to="/" className="stf-brand">
-                        <img src={logo} alt="Heroes College" className="stf-brand-logo" />
+                        <img src={logo} alt="PenWorld College" className="stf-brand-logo" />
                         <div className="stf-brand-titles">
-                            <span className="stf-brand-name">Heroes College</span>
+                            <span className="stf-brand-name">PenWorld College</span>
                             <span className="stf-brand-sub">&amp; Primary School</span>
                         </div>
                     </NavLink>

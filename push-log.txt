@@ -1,0 +1,114 @@
+﻿
+=== ASSETS ===
+
+Name             Length
+----             ------
+boy.png          160302
+encourage.png      2438
+ensure.png         3831
+girl.png         175574
+group1.png       512202
+group2.png       363792
+heroesimage.png  561853
+instill.png        3588
+logo1.png          7726
+logo2.png          1254
+logo3.png         31989
+logo4.png        254901
+oga1.jpeg       5490396
+sign1.png          6000
+sign2.png         13211
+
+
+
+=== CHECK PenWorldimage vs heroesimage ===
+False
+
+True
+
+True
+
+=== GIT STATUS BEFORE ===
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add/rm <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   FRONTEND_API_AUDIT.md
+	modified:   index.html
+	modified:   package-lock.json
+	modified:   package.json
+	modified:   src/App.css
+	modified:   src/Landing/1Navbar/Navbar.css
+	modified:   src/Landing/1Navbar/Navbar.jsx
+	modified:   src/Landing/2Hero/Hero.css
+	modified:   src/Landing/2Hero/Hero.jsx
+	modified:   src/Landing/3Unique/Unique.css
+	modified:   src/Landing/4Enrol/Enrol.css
+	modified:   src/Landing/4Enrol/Enrol.jsx
+	modified:   src/Landing/5Footer/Footer.css
+	modified:   src/Landing/5Footer/Footer.jsx
+	modified:   src/Landing/5Footer/Policy.css
+	modified:   src/Landing/5Footer/Policy.jsx
+	modified:   src/Landing/5Footer/Terms.css
+	modified:   src/Landing/5Footer/Terms.jsx
+	modified:   src/Landing/About/About.css
+	modified:   src/Landing/About/About.jsx
+	modified:   src/Landing/Admissions/Admissions.css
+	modified:   src/Landing/Admissions/Admissions.jsx
+	modified:   src/Portal/Admin/10CBT.jsx
+	modified:   src/Portal/Admin/11Profile.jsx
+	modified:   src/Portal/Admin/1Login.jsx
+	modified:   src/Portal/Admin/3Student.jsx
+	modified:   src/Portal/Admin/5Staff.jsx
+	modified:   src/Portal/Admin/6Classes.jsx
+	modified:   src/Portal/Admin/7Assignment.jsx
+	modified:   src/Portal/Admin/8OnlineClasses.jsx
+	modified:   src/Portal/Admin/9Result.jsx
+	modified:   src/Portal/Admin/9Result2.jsx
+	modified:   src/Portal/Admin/AdminLayout.jsx
+	modified:   src/Portal/CbtResultsModal.jsx
+	modified:   src/Portal/Portal.css
+	modified:   src/Portal/Staff/10Profile.jsx
+	modified:   src/Portal/Staff/1Login.jsx
+	modified:   src/Portal/Staff/2Dashboard.jsx
+	modified:   src/Portal/Staff/3Student.jsx
+	modified:   src/Portal/Staff/5Assignment.jsx
+	modified:   src/Portal/Staff/6OnlineClass.jsx
+	modified:   src/Portal/Staff/7Result.jsx
+	modified:   src/Portal/Staff/9CBT.jsx
+	modified:   src/Portal/Staff/StaffLayout.jsx
+	modified:   src/Portal/Student/1Login.jsx
+	modified:   src/Portal/Student/2Dashboard.jsx
+	modified:   src/Portal/Student/3Assignment.jsx
+	modified:   src/Portal/Student/4Online.jsx
+	modified:   src/Portal/Student/5Result.jsx
+	modified:   src/Portal/Student/6CBT.jsx
+	modified:   src/Portal/Student/7Profile.jsx
+	modified:   src/Portal/Student/8CBTExam.jsx
+	modified:   src/Portal/Student/StudentLayout.jsx
+	modified:   src/api.js
+	modified:   src/assets/logo1.png
+	modified:   src/assets/logo2.png
+	modified:   src/assets/logo3.png
+	modified:   src/assets/logo4.png
+	deleted:    src/assets/oga1.png
+	modified:   src/hooks/useClasses.jsx
+	modified:   src/hooks/useMeta.js
+	modified:   src/hooks/useResultEntry.jsx
+	modified:   src/hooks/useStaffMeta.js
+	modified:   src/hooks/useStudentMeta.js
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	do-push.ps1
+	fix-backend.ps1
+	push-log.txt
+	rename-heroes.ps1
+	src/assets/oga1.jpeg
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+=== REMOVING TEMP SCRIPTS ===
+=== GIT ADD ===

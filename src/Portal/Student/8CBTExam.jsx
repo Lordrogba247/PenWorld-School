@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+﻿import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./8CBTExam.css";
 import {
@@ -394,7 +394,7 @@ export default function StudentCBTExam() {
         return (
             <div className="cbtx-fullscreen">
                 <div className="cbtx-brandbar">
-                    <span className="cbtx-brand-name">Heroes College <em>&amp; Primary School</em></span>
+                    <span className="cbtx-brand-name">PenWorld College <em>&amp; Primary School</em></span>
                 </div>
                 <div className="cbtx-page">
                     <p>Loading exam...</p>
@@ -414,7 +414,7 @@ export default function StudentCBTExam() {
         return (
             <div className="cbtx-fullscreen">
                 <div className="cbtx-brandbar">
-                    <span className="cbtx-brand-name">Heroes College <em>&amp; Primary School</em></span>
+                    <span className="cbtx-brand-name">PenWorld College <em>&amp; Primary School</em></span>
                 </div>
                 <div className="cbtx-page">
                     <div className="cbtx-result-card">
@@ -442,7 +442,7 @@ export default function StudentCBTExam() {
         return (
             <div className="cbtx-fullscreen">
                 <div className="cbtx-brandbar">
-                    <span className="cbtx-brand-name">Heroes College <em>&amp; Primary School</em></span>
+                    <span className="cbtx-brand-name">PenWorld College <em>&amp; Primary School</em></span>
                 </div>
                 <div className="cbtx-page">
                     <p className="cbtx-error">{loadError}</p>
@@ -461,7 +461,7 @@ export default function StudentCBTExam() {
         return (
             <div className="cbtx-fullscreen">
                 <div className="cbtx-brandbar">
-                    <span className="cbtx-brand-name">Heroes College <em>&amp; Primary School</em></span>
+                    <span className="cbtx-brand-name">PenWorld College <em>&amp; Primary School</em></span>
                 </div>
                 <div className="cbtx-page">
                     <div className="cbtx-result-card">
@@ -489,7 +489,7 @@ export default function StudentCBTExam() {
         return (
             <div className="cbtx-fullscreen">
                 <div className="cbtx-brandbar">
-                    <span className="cbtx-brand-name">Heroes College <em>&amp; Primary School</em></span>
+                    <span className="cbtx-brand-name">PenWorld College <em>&amp; Primary School</em></span>
                 </div>
                 <div className="cbtx-page">
                     <p className="cbtx-error">{submitError}</p>
@@ -506,7 +506,7 @@ export default function StudentCBTExam() {
         return (
             <div className="cbtx-fullscreen">
                 <div className="cbtx-brandbar">
-                    <span className="cbtx-brand-name">Heroes College <em>&amp; Primary School</em></span>
+                    <span className="cbtx-brand-name">PenWorld College <em>&amp; Primary School</em></span>
                 </div>
                 <div className="cbtx-page">
                     <div className="cbtx-ready-card">
@@ -537,7 +537,7 @@ export default function StudentCBTExam() {
     return (
         <div className="cbtx-fullscreen">
             <div className="cbtx-brandbar">
-                <span className="cbtx-brand-name">Heroes College <em>&amp; Primary School</em></span>
+                <span className="cbtx-brand-name">PenWorld College <em>&amp; Primary School</em></span>
                 <span className="cbtx-brand-timer">{formatTime(secondsLeft)}</span>
             </div>
             <div className="cbtx-page cbtx-page--locked">
@@ -635,3 +635,4 @@ export default function StudentCBTExam() {
         </div>
     );
 }
+

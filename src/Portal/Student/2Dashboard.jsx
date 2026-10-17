@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import "./2Dashboard.css";
 
 const BASE_URL = "https://heroesschool-management-backend.vercel.app";
@@ -183,3 +183,4 @@ export default function StudentDashboard() {
         </div>
     );
 }
+

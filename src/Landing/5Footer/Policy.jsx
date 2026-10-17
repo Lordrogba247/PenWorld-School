@@ -1,4 +1,4 @@
-import "./Policy.css";
+﻿import "./Policy.css";
 
 export default function Policy() {
     return (
@@ -8,7 +8,7 @@ export default function Policy() {
                 <p className="terms-effective">Effective Date: 15th June, 2026</p>
 
                 <p className="terms-intro">
-                    Heroes College ("we," "our," or "us") is committed to protecting
+                    PenWorld College ("we," "our," or "us") is committed to protecting
                     the privacy of students, parents, guardians, staff, and all users
                     of our website and online services, including our CBT examination
                     and result portal.
@@ -113,17 +113,17 @@ export default function Policy() {
                     <h2>8. Contact Information</h2>
                     <p>For questions about this Privacy Policy, please contact:</p>
 
-                    <p className="terms-address-label">Heroes College &amp; Primary School, Gaa-Akanbi Address</p>
+                    <p className="terms-address-label">PenWorld College &amp; Primary School, Gaa-Akanbi Address</p>
                     <p>
                         No 84, Gaa-Akanbi Road, Behind Erin-Ile Junction, Ilorin, Kwara
                         State, Nigeria (College &amp; Primary School)
                     </p>
 
-                    <p className="terms-address-label">Heroes College Amoyo Address</p>
+                    <p className="terms-address-label">PenWorld College Amoyo Address</p>
                     <p>Redemption Road, Gbagede, Amoyo, Kwara State, Nigeria (College Only)</p>
 
                     <p className="terms-contact-line">
-                        Email: <a href="mailto:heroesglobal@gmail.com">heroesglobal@gmail.com</a>
+                        Email: <a href="mailto:PenWorldglobal@gmail.com">PenWorldglobal@gmail.com</a>
                     </p>
                     <p className="terms-contact-line">
                         Phone Number: <a href="tel:+2348038607740">+234 803 860 7740</a>

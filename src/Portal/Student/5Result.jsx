@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import "./5Result.css";
 import schoolLogo from "../../assets/logo4.png";
 import principalSign from "../../assets/sign1.png";
@@ -11,15 +11,15 @@ const BASE_URL = "https://heroesschool-management-backend.vercel.app";
 const TERM_LABELS = { first: "First Term", second: "Second Term", third: "Third Term" };
 
 // Decide which school name to show on the result header, based on the student's class.
-// Kindergarten/Nursery/Primary classes → "Heroes Nursery and Primary School"
-// Everything else (JSS/SSS) → "Heroes College"
+// Kindergarten/Nursery/Primary classes → "PenWorld Nursery and Primary School"
+// Everything else (JSS/SSS) → "PenWorld College"
 function getSchoolName(studentClass) {
-    if (!studentClass) return "HEROES COLLEGE & PRIMARY SCHOOL";
+    if (!studentClass) return "PenWorld College & PRIMARY SCHOOL";
     const cls = String(studentClass).toLowerCase();
     const isLowerSchool = cls.includes("primary") || cls.includes("nursery") || cls.includes("kindergarten") || cls.includes("creche") || /(^|[^a-z])kg([^a-z]|$)/.test(cls);
     return isLowerSchool
-        ? "HEROES NURSERY AND PRIMARY SCHOOL"
-        : "HEROES COLLEGE";
+        ? "PenWorld NURSERY AND PRIMARY SCHOOL"
+        : "PenWorld College";
 }
 
 // Grade column + sign2 signature only apply to Kindergarten/Nursery/Primary.
@@ -365,3 +365,4 @@ export default function StudentResults() {
         </div>
     );
 }
+

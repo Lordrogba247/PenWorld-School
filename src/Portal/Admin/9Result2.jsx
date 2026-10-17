@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./9Result2.css";
 import schoolLogo from "../../assets/logo3.png";
@@ -8,7 +8,7 @@ import lowerSign from "../../assets/sign2.png";
 const BASE_URL = "https://heroesschool-management-backend.vercel.app";
 
 const schoolInfo = {
-    name: "HEROES COLLEGE & PRIMARY SCHOOL",
+    name: "PenWorld College & PRIMARY SCHOOL",
 };
 
 function isLowerSchoolClass(studentClass) {
@@ -194,7 +194,7 @@ export default function AdminResultView() {
             <div className="adr2-card">
                 {/* Letterhead */}
                 <div className="adr2-letterhead">
-                    <img src={schoolLogo} alt="Heroes College" className="adr2-letterhead-logo" />
+                    <img src={schoolLogo} alt="PenWorld College" className="adr2-letterhead-logo" />
                     <p className="adr2-letterhead-name">{schoolInfo.name}</p>
                 </div>
 
@@ -273,3 +273,4 @@ export default function AdminResultView() {
         </div>
     );
 }
+

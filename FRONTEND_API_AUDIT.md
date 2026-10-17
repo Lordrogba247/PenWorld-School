@@ -1,4 +1,4 @@
-# Frontend → Backend Contract Audit — Heroes Academy
+﻿# Frontend → Backend Contract Audit — PenWorld Academy
 Base URL (hardcoded everywhere): `https://heroesschool-management-backend.vercel.app`
 Generated: 2026-10-08 — full static trace of `src/**/*` (fetch + axios).
 
@@ -139,4 +139,6 @@ FIX: multer attachment(single) on create vs files(array) on submit. dueDate free
 - Admin: GET /api/admin/online-classes; POST {date,time,classLabel,subject,meetingLink}; DELETE /:id.
 - Staff: same under /api/staff/online-classes.
 - Student: GET /api/student/online-classes -> [{subject,classLabel|class,date,time,meetingLink|link}].
+
+
 

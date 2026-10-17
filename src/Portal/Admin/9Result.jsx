@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMeta } from "../../hooks/useMeta";
 import "./9Result.css";
@@ -505,3 +505,4 @@ export default function AdminResultsList() {
         </div>
     );
 }
+

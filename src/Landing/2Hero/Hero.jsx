@@ -1,6 +1,6 @@
-import "./Hero.css";
+﻿import "./Hero.css";
 // Add these imports at the very top of your component file
-import heroesImage from '../../assets/heroesimage.png';
+import PenWorldImage from '../../assets/PenWorldimage.png';
 import instillImage from '../../assets/instill.png';
 import ensureImage from '../../assets/ensure.png';
 import encourageImage from '../../assets/encourage.png';
@@ -17,7 +17,7 @@ export default function Hero() {
                     </h1>
 
                     <p className="hero-text">
-                        Heroes Schools foster academic, spiritual, and social growth.
+                        PenWorld Schools foster academic, spiritual, and social growth.
                         From Nursery to Secondary, we provide a strong foundation in
                         faith and learning. Our goal is to raise students who serve both
                         God and humanity. Excellence in all aspects of life is our
@@ -36,8 +36,8 @@ export default function Hero() {
                 <div className="hero-collage">
                     {/* The single flattened collage photo (already cut into the bolt shape in Figma) */}
                     <img
-                        src={heroesImage}
-                        alt="Heroes College students and campus life"
+                        src={PenWorldImage}
+                        alt="PenWorld College students and campus life"
                         className="hero-img-main"
                     />
 

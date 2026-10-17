@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import "./6Classes.css";
 import { useMeta } from "../../hooks/useMeta";
 import { normalizeClassesPayload } from "../../hooks/useClasses.jsx";
@@ -762,3 +762,4 @@ export default function AdminClasses() {
         </div>
     );
 }
+

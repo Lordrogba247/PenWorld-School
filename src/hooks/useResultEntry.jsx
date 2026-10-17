@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { useMeta } from "./useMeta";
 import { useStaffMeta } from "./useStaffMeta";
 
@@ -664,3 +664,5 @@ export function useResultEntry(portal = "staff", studentId, incoming = {}) {
         handleAddResult, handleEditRow, handleDeleteRow, handleSubmitResult,
     };
 }
+
+

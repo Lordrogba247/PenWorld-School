@@ -1,4 +1,4 @@
-import "./Admissions.css";
+﻿import "./Admissions.css";
 
 export default function Admissions() {
     return (
@@ -13,7 +13,7 @@ export default function Admissions() {
                 </ul>
 
                 <p className="admissions-subintro">
-                    Admission Instructions for Heroes College &amp; Primary School
+                    Admission Instructions for PenWorld College &amp; Primary School
                 </p>
 
                 <section className="admissions-section">
@@ -84,13 +84,13 @@ export default function Admissions() {
                     <h2>Payment Method</h2>
                     <ul>
                         <li style={{ color: "#1a1a2e", fontWeight: "500" }}> For JSS1, JSS2, SS1 and SS2</li>
-                        <li>FCMB Bank: Account Number: <span style={{ color: "#1a1a2e", fontWeight: "500" }}>9122722015</span> (Heroes Nursery, Primary and Secondary School)</li>
-                        <li>First Bank: Account Number: <span style={{ color: "#1a1a2e", fontWeight: "500" }}>2035749624</span> (Heroes Nursery, Primary and Secondary School)</li>
+                        <li>FCMB Bank: Account Number: <span style={{ color: "#1a1a2e", fontWeight: "500" }}>9122722015</span> (PenWorld Nursery, Primary and Secondary School)</li>
+                        <li>First Bank: Account Number: <span style={{ color: "#1a1a2e", fontWeight: "500" }}>2035749624</span> (PenWorld Nursery, Primary and Secondary School)</li>
                     </ul>
 
                     <ul>
                         <li style={{ color: "#1a1a2e", fontWeight: "500" }}> For JSS3 and SS3</li>
-                        <li>KCM'B Micro Finance Bank: Account Number: <span style={{ color: "#1a1a2e", fontWeight: "500" }}>1100282794</span> (Heroes Nursery, Primary and Secondary School)</li>
+                        <li>KCM'B Micro Finance Bank: Account Number: <span style={{ color: "#1a1a2e", fontWeight: "500" }}>1100282794</span> (PenWorld Nursery, Primary and Secondary School)</li>
                     </ul>
                 </section>
 

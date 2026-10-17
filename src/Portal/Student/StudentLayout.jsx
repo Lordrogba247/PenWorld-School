@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "./StudentLayout.css";
 import logo from "../../assets/logo2.png";
@@ -113,9 +113,9 @@ export default function StudentLayout() {
                         <span /><span /><span />
                     </button>
                     <NavLink to="/" className="stl-brand">
-                        <img src={logo} alt="Heroes College" className="stl-brand-logo" />
+                        <img src={logo} alt="PenWorld College" className="stl-brand-logo" />
                         <div className="stl-brand-titles">
-                            <span className="stl-brand-name">Heroes College</span>
+                            <span className="stl-brand-name">PenWorld College</span>
                             <span className="stl-brand-sub">&amp; Primary School</span>
                         </div>
                     </NavLink>
