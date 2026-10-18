@@ -1,10 +1,10 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./9CBT.css";
 import { useStaffMeta } from "../../hooks/useStaffMeta";
 import CbtResultsModal from "../CbtResultsModal";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 // Same liveness rule as Admin/Student: expired, deactivated, closed-status,
 // or past scheduled date => Closed. Otherwise Active.

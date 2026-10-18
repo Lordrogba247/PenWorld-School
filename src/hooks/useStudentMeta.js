@@ -1,7 +1,7 @@
-﻿import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { normalizeClassesPayload } from "./useClasses.jsx";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 let studentMetaCache = null;
 

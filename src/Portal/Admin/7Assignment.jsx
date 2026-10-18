@@ -1,8 +1,8 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./7Assignment.css";
 import { useMeta } from "../../hooks/useMeta";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 const emptyForm = { subject: "", classLabel: "", instructions: "", dueDate: "" };
 

@@ -1,0 +1,45 @@
+﻿=== START 2026-10-18T01:19:32.0521018+01:00 ===
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\hooks\useClasses.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\hooks\useMeta.js
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\hooks\useResultEntry.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\hooks\useStaffMeta.js
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\hooks\useStudentMeta.js
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\10CBT.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\11Profile.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\1Login.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\3Student.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\5Staff.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\6Classes.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\7Assignment.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\8OnlineClasses.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\9Result.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Admin\9Result2.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Staff\10Profile.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Staff\1Login.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Staff\2Dashboard.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Staff\3Student.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Staff\5Assignment.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Staff\6OnlineClass.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Staff\7Result.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Staff\9CBT.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Student\1Login.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Student\2Dashboard.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Student\3Assignment.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Student\4Online.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Student\5Result.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Student\6CBT.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Student\7Profile.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\Student\8CBTExam.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\Portal\CbtResultsModal.jsx
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\src\api.js
+C:\Users\USER\Desktop\My Dev Works\Penworld-school\FRONTEND_API_AUDIT.md
+replaced in 34 files
+--- validate JSONs ---
+package.json OK
+
+package-lock.json OK
+
+--- check BOM absent ---
+package.json first3: 123,13,10
+package-lock first3: 123,13,10
+--- git add+commit ---

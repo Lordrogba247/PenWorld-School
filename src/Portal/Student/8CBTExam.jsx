@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./8CBTExam.css";
 import {
@@ -9,7 +9,7 @@ import {
     markTestSubmitted,
 } from "./cbtSubmitGuard";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 // Fullscreen exam page — rendered OUTSIDE StudentLayout (see App.jsx),
 // so no sidebar/topbar shows. Includes its own minimal brand header + auth guard.

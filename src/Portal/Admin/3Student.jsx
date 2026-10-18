@@ -1,9 +1,9 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./3Student.css";
 import AddStudentModal from "./4Add";
 import { useMeta } from "../../hooks/useMeta";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 export default function AdminStudentsList() {
     // Live list from /api/admin/meta: classNames (plain strings, school order).

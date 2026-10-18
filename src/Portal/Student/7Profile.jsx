@@ -1,7 +1,7 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./7Profile.css";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 const CHANGE_PASSWORD_API_URL = `${BASE_URL}/api/auth/change-password`;
 
 const MIN_PASSWORD_LENGTH = 6;

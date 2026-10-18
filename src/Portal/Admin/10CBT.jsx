@@ -1,10 +1,10 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import * as XLSX from "xlsx";
 import "./10CBT.css";
 import { useMeta } from "../../hooks/useMeta";
 import CbtResultsModal from "../CbtResultsModal";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 // Card colors alternate purple/red
 const cardAccents = ["purple", "red"];

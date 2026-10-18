@@ -1,11 +1,11 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import "./9Result2.css";
 import schoolLogo from "../../assets/logo3.png";
 import principalSign from "../../assets/sign1.png";
 import lowerSign from "../../assets/sign2.png";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 const schoolInfo = {
     name: "PenWorld College & PRIMARY SCHOOL",

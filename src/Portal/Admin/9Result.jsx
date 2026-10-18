@@ -1,9 +1,9 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMeta } from "../../hooks/useMeta";
 import "./9Result.css";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 // Terms are hardcoded/stable per the backend docs, so no need to pull these from meta.
 const TERM_OPTIONS = [

@@ -1,8 +1,8 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./5Assignment.css";
 import { useStaffMeta } from "../../hooks/useStaffMeta";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 export default function StaffAssignment() {
     const { classes: classOptions, getSubjectsForClass, loading: metaLoading } = useStaffMeta();

@@ -1,9 +1,9 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useStaffMeta } from "../../hooks/useStaffMeta";
 import "./7Result.css";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 // Fallback only — used if useStaffMeta fails for some reason.
 // Keep in sync with newly created academic sessions.

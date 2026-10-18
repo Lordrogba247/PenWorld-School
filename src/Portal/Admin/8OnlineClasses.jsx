@@ -1,8 +1,8 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./8OnlineClasses.css";
 import { useMeta } from "../../hooks/useMeta";
 
-const BASE_URL = "https://heroesschool-management-backend.vercel.app";
+const BASE_URL = "https://pen-world-school.vercel.app";
 
 const emptyForm = { date: "", time: "", classLabel: "", subject: "", meetingLink: "" };
 

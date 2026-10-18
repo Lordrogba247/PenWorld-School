@@ -100,8 +100,10 @@ export default function Footer() {
                     © {new Date().getFullYear()} PenWorld College &amp; Primary School
                 </p>
                 <div className="footer-legal-links">
-                    <Link to="/privacy-policy">Privacy Policy</Link>
-                    <Link to="/terms-of-use">Term of Use</Link>
+                    <Link to="/">Privacy Policy</Link>
+                    {/* <Link to="/privacy-policy">Privacy Policy</Link> */}
+                    <Link to="/">Term of Use</Link>
+                    {/* <Link to="/terms-of-use">Term of Use</Link> */}
                 </div>
             </div>
         </footer>
