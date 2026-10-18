@@ -2,8 +2,8 @@ $ErrorActionPreference = 'Continue'
 Set-Location "c:\Users\USER\Desktop\My Dev Works\Penworld-school"
 $log = "c:\Users\USER\Desktop\My Dev Works\Penworld-school\swap-log.txt"
 "=== START $(Get-Date -Format o) ===" | Set-Content $log -Encoding UTF8
-$old = 'heroesschool-management-backend.vercel.app'
-$new = 'pen-world-school.vercel.app'
+$old = 'https://pen-world-school.vercel.app'
+$new = 'https://penworld-demo-school-backend.vercel.app'
 $exts = @('*.js','*.jsx','*.ts','*.tsx','*.css','*.html','*.json','*.md')
 $files = Get-ChildItem -Path "c:\Users\USER\Desktop\My Dev Works\Penworld-school" -Recurse -File -Include $exts | Where-Object { $_.FullName -notmatch 'node_modules|\.git\\|dist\\' }
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
@@ -28,7 +28,7 @@ $b2 = [System.IO.File]::ReadAllBytes("c:\Users\USER\Desktop\My Dev Works\Penworl
 "package-lock first3: $($b2[0]),$($b2[1]),$($b2[2])" | Add-Content $log -Encoding UTF8
 "--- git add+commit ---" | Add-Content $log -Encoding UTF8
 git add -A 2>&1 | Out-String | Add-Content $log -Encoding UTF8
-git -c user.name="Lordrogba247" -c user.email="Lordrogba247@users.noreply.github.com" commit -m "Point all APIs to pen-world-school backend" 2>&1 | Out-String | Add-Content $log -Encoding UTF8
+git -c user.name="Lordrogba247" -c user.email="Lordrogba247@users.noreply.github.com" commit -m "Point all APIs to penworld-demo-school-backend" 2>&1 | Out-String | Add-Content $log -Encoding UTF8
 "--- push ---" | Add-Content $log -Encoding UTF8
 $job = Start-Job -ScriptBlock { Set-Location "c:\Users\USER\Desktop\My Dev Works\Penworld-school"; git push origin master 2>&1 | Out-String }
 $done = $job | Wait-Job -Timeout 120

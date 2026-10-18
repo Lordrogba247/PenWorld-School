@@ -1,5 +1,5 @@
 # Frontend → Backend Contract Audit — PenWorld Academy
-Base URL (hardcoded everywhere): `https://pen-world-school.vercel.app`
+Base URL (hardcoded everywhere): `https://penworld-demo-school-backend.vercel.app`
 Generated: 2026-10-08 — full static trace of `src/**/*` (fetch + axios).
 
 > Each row below is EXACTLY what the deployed frontend sends. If backend expects

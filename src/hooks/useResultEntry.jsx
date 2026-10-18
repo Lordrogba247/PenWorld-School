@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useMeta } from "./useMeta";
 import { useStaffMeta } from "./useStaffMeta";
 
-export const RESULT_BASE_URL = "https://pen-world-school.vercel.app";
+export const RESULT_BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 export const FALLBACK_SUBJECT_OPTIONS = [
     "Mathematics", "English Language", "Basic Science", "Basic Technology",

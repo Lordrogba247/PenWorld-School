@@ -5,7 +5,7 @@ import principalSign from "../../assets/sign1.png";
 import lowerSign from "../../assets/sign2.png";
 import { useStudentMeta } from "../../hooks/useStudentMeta";
 
-const BASE_URL = "https://pen-world-school.vercel.app";
+const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 // Term display labels — backend expects lowercase values ("first"/"second"/"third")
 const TERM_LABELS = { first: "First Term", second: "Second Term", third: "Third Term" };

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { normalizeClassesPayload, resolveLegacyClass } from "./useClasses.jsx";
 
-const BASE_URL = "https://pen-world-school.vercel.app";
+const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 // Module-level cache — same pattern as useMeta, separate cache since this hits a different endpoint
 let staffMetaCache = null;

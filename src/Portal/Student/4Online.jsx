@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./4Online.css";
 
-const BASE_URL = "https://pen-world-school.vercel.app";
+const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 export default function StudentOnlineClass() {
     const [classes, setClasses] = useState([]);

@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "./3Assignment.css";
 import api from "../../api";
 
-const BASE_URL = "https://pen-world-school.vercel.app";
+const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 function resolveFileUrl(url) {
     if (!url) return "";

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./6CBT.css";
 import { isTestSubmitted } from "./cbtSubmitGuard";
 
-const BASE_URL = "https://pen-world-school.vercel.app";
+const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 // A test is visible only while it is live:
 // - explicitly deactivated (isActive === false) -> hidden

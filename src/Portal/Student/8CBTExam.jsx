@@ -9,7 +9,7 @@ import {
     markTestSubmitted,
 } from "./cbtSubmitGuard";
 
-const BASE_URL = "https://pen-world-school.vercel.app";
+const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 // Fullscreen exam page — rendered OUTSIDE StudentLayout (see App.jsx),
 // so no sidebar/topbar shows. Includes its own minimal brand header + auth guard.

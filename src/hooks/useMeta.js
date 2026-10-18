@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { normalizeClassesPayload, resolveLegacyClass } from "./useClasses.jsx";
 
-const BASE_URL = "https://pen-world-school.vercel.app";
+const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 // Module-level cache so every component sharing this hook reuses one fetch
 // per page-load instead of hitting /api/admin/meta again on every mount.
