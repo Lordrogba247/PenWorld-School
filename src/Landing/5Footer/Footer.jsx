@@ -17,18 +17,11 @@ export default function Footer() {
 
                     <div className="footer-block">
                         <p className="footer-label">
-                            College &amp; Primary School, Gaa-Akanbi
+                            College &amp; Primary School,
                         </p>
                         <p className="footer-text">
-                            No 84, Gaa-Akanbi Road, Behind Erin-Ile Junction, Ilorin, Kwara
+                            School address, Ilorin, Kwara
                             State, Nigeria.
-                        </p>
-                    </div>
-
-                    <div className="footer-block">
-                        <p className="footer-label">College, Amoyo</p>
-                        <p className="footer-text">
-                            Redemption Road, Gbagede, Amoyo, Kwara State, Nigeria.
                         </p>
                     </div>
                 </div>
@@ -38,15 +31,15 @@ export default function Footer() {
                     <div className="footer-block">
                         <p className="footer-label">Phone Number</p>
                         <p className="footer-text">
-                            <a href="tel:+2348106840286">+234 810 684 0286</a>
+                            <a href="tel:+2348010001111">+234 801 000 1111</a>
                         </p>
                     </div>
 
                     <div className="footer-block">
                         <p className="footer-label">Email Address:</p>
                         <p className="footer-text">
-                            <a href="mailto:penworld.yoursmile@gmail.com">
-                                penworld.yoursmile@gmail.com
+                            <a href="mailto:schoolname@gmail.com">
+                                schoolname@gmail.com
                             </a>
                         </p>
                     </div>

@@ -43,3 +43,25 @@ package-lock.json OK
 package.json first3: 123,13,10
 package-lock first3: 123,13,10
 --- git add+commit ---
+
+[master 0635921] Point all APIs to pen-world-school backend
+ 38 files changed, 160 insertions(+), 155 deletions(-)
+ create mode 100644 swap-backend.ps1
+ create mode 100644 swap-log.txt
+
+--- push ---
+git : To https://github.com/Lordrogba247/PenWorld-School.git
+    + CategoryInfo          : NotSpecified: (To https://gith...orld-School.git:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+   188316c..0635921  master -> master
+
+
+--- final ---
+0635921 Point all APIs to pen-world-school backend
+188316c new fix
+f0e9d68 Remove temp redeploy scripts
+
+ M swap-log.txt
+
+=== END ===

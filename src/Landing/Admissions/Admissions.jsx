@@ -20,7 +20,7 @@ export default function Admissions() {
                     <h2>Admission Procedure</h2>
                     <ol>
                         <li>Obtain form from the School</li>
-                        <li>Sit for entrace and placement exam</li>
+                        <li>Sit for entrance and placement exam</li>
                         <li>Admission and acceptance/Payment of school fees</li>
                         <li>Upon successful completion of the examination and interview, an offer of admission will be issued.</li>
                     </ol>
