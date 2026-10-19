@@ -15,7 +15,7 @@ export default function About() {
                     <div className="about-top-text">
                         <p>
                             PenWorld College was founded in April 2014 by Mr. and Mrs.
-                            David Mobolaji with a clear vision to cultivate God-fearing,
+                            John Doe with a clear vision to cultivate God-fearing,
                             disciplined, and academically excellent leaders who will
                             serve God and humanity. The school was established to
                             nurture students into diligent, hardworking individuals
@@ -25,9 +25,9 @@ export default function About() {
                         <p>
                             The college officially commenced operations on October 15,
                             2014, beginning its journey at PenWorld International
-                            School, Gaa-Akanbi, Ilorin, with just thirteen students
+                            School, Ilorin, with just thirteen students
                             and a committed team of four staff members under the
-                            leadership of Principal Mr. Adekeye Temitope. By 2015,
+                            leadership of Principal Mr. Lorem Ipsom. By 2015,
                             the school had begun participating successfully in WAEC
                             and NECO examinations, marking a strong start in external
                             academic performance.
@@ -48,7 +48,7 @@ export default function About() {
                             className="about-proprietor-photo"
                         />
                         <div className="about-proprietor-caption">
-                            <p className="about-proprietor-name">Mr. David Mobolaji</p>
+                            <p className="about-proprietor-name">Mr. John Doe</p>
                             <p className="about-proprietor-role">
                                 Proprietor, PenWorld College &amp; Primary School
                             </p>
@@ -66,7 +66,7 @@ export default function About() {
                             to academic excellence and character development.
                         </p>
                         <p>
-                            Guided by the vision of its proprietor, David Mobolaji,
+                            Guided by the vision of its proprietor, John Doe,
                             PenWorld College continues to uphold a nurturing
                             environment where students are encouraged to unlock
                             their potential, embrace challenges, and grow into
