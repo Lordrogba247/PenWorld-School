@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./3Student.css";
 import AddStudentModal from "./4Add";
 import { useMeta } from "../../hooks/useMeta";
@@ -7,8 +7,9 @@ const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
 
 export default function AdminStudentsList() {
     // Live list from /api/admin/meta: classNames (plain strings, school order).
-    const { classNames, classesByBase, loading: metaLoading } = useMeta();
+    const { classNames, classesByBase, loading: metaLoading, error: metaError, refetch: refetchMeta } = useMeta();
     const classOptions = classNames.length > 0 ? classNames : [];
+    const didFallbackLoad = useRef(false);
 
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -26,7 +27,10 @@ export default function AdminStudentsList() {
     const loadStudents = (cls) => {
         setLoading(true);
         setError("");
-        fetch(`${BASE_URL}/api/admin/students?class=${encodeURIComponent(cls)}`, {
+        const url = cls
+            ? `${BASE_URL}/api/admin/students?class=${encodeURIComponent(cls)}`
+            : `${BASE_URL}/api/admin/students`;
+        fetch(url, {
             method: "GET",
             headers: { "Authorization": `Bearer ${token}` },
         })
@@ -62,6 +66,15 @@ export default function AdminStudentsList() {
             );
         }
     }, [classOptions]);
+
+    // Fallback: if meta finished but yielded no classes (backend unreachable or
+    // empty), stop spinning and try an unfiltered load so the page never sticks
+    // on "Loading students..." forever.
+    useEffect(() => {
+        if (metaLoading || classOptions.length > 0 || classFilter || didFallbackLoad.current) return;
+        didFallbackLoad.current = true;
+        loadStudents("");
+    }, [metaLoading, classOptions, classFilter]);
 
     const openAddModal = () => {
         setEditingStudent(null);
@@ -161,6 +174,18 @@ export default function AdminStudentsList() {
             </select>
 
             {error && <p className="stu-error">{error}</p>}
+            {!metaLoading && classOptions.length === 0 && (
+                <p className="stu-error">
+                    {metaError ? `Could not load classes: ${metaError}. ` : "No classes found on the server. "}
+                    <button
+                        type="button"
+                        style={{ marginLeft: 8, textDecoration: "underline", cursor: "pointer" }}
+                        onClick={() => { didFallbackLoad.current = false; refetchMeta(); }}
+                    >
+                        Retry
+                    </button>
+                </p>
+            )}
 
             <div className="stu-table-card">
                 <div className="stu-table-wrap">
