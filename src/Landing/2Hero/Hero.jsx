@@ -1,9 +1,6 @@
 ﻿import "./Hero.css";
 // Add these imports at the very top of your component file
-import PenWorldImage from '../../assets/heroesimage.png';
-import instillImage from '../../assets/instill.png';
-import ensureImage from '../../assets/ensure.png';
-import encourageImage from '../../assets/encourage.png';
+import PenWorldImage from '../../assets/heroesimage1.png';
 import { Link } from "react-router-dom";
 export default function Hero() {
     return (
@@ -39,23 +36,6 @@ export default function Hero() {
                         src={PenWorldImage}
                         alt="PenWorld College students and campus life"
                         className="hero-img-main"
-                    />
-
-                    {/* 3 badge images - drop your exported badge graphics here */}
-                    <img
-                        src={instillImage}
-                        alt="We instill leadership and team skills"
-                        className="hero-badge hero-badge-navy"
-                    />
-                    <img
-                        src={ensureImage}
-                        alt="We ensure learners have Vocational Skills"
-                        className="hero-badge hero-badge-purple"
-                    />
-                    <img
-                        src={encourageImage}
-                        alt="We encourage Cultural diversity"
-                        className="hero-badge hero-badge-red"
                     />
                 </div>
             </div>

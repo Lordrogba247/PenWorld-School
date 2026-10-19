@@ -1,6 +1,6 @@
 ﻿import "./Enrol.css";
-import boyImage from '../../assets/boy.png';
-import girlImage from '../../assets/girl.png';
+import boyImage from '../../assets/boy.jpeg';
+import girlImage from '../../assets/girl.jpeg';
 import { Link, useNavigate, useLocation } from "react-router-dom";
 export default function Enrol() {
     return (
