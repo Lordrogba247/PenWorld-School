@@ -27,7 +27,7 @@ export default function About() {
                             2014, beginning its journey at PenWorld International
                             School, Ilorin, with just thirteen students
                             and a committed team of four staff members under the
-                            leadership of Principal Mr. Lorem Ipsom. By 2015,
+                            leadership of Principal Mr. Lorem Ipsum. By 2015,
                             the school had begun participating successfully in WAEC
                             and NECO examinations, marking a strong start in external
                             academic performance.
