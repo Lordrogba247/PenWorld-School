@@ -1,6 +1,6 @@
 ﻿import "./About.css";
-import groupPhoto1 from "../../assets/group2.png";
-import groupPhoto2 from "../../assets/group1.png";
+import groupPhoto1 from "../../assets/group2.jpeg";
+import groupPhoto2 from "../../assets/group1.jpeg";
 import proprietorPhoto from "../../assets/oga1.jpeg";
 
 export default function About() {
