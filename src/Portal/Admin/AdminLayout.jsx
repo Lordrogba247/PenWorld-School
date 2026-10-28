@@ -37,6 +37,18 @@ const navItems = [
         ),
     },
     {
+        label: "Bulk Data",
+        path: "/portal/admin/bulk-data",
+        icon: (
+            <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24">
+                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z" />
+                <path d="M14 2v6h6" />
+                <path d="M9 12h6M9 16h6" />
+                <path d="M8 6h8v4H8z" />
+            </svg>
+        ),
+    },
+    {
         label: "Classes",
         path: "/portal/admin/classes",
         icon: (

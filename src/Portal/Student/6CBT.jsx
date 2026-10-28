@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./6CBT.css";
 import { isTestSubmitted } from "./cbtSubmitGuard";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 // A test is visible only while it is live:
 // - explicitly deactivated (isActive === false) -> hidden
@@ -157,52 +157,52 @@ export default function StudentCBT() {
                     {tests.map((test) => {
                         const submitted = isTestSubmitted(test);
                         return (
-                        <div className="cbt-card" key={test._id || test.id}>
-                            <div className="cbt-card-header">
-                                <p className="cbt-card-subject">{test.subject}</p>
-                                <p className="cbt-card-type">{test.description}</p>
-                            </div>
-                            <div className="cbt-card-body">
-                                <p className="cbt-meta-row">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
-                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                                    </svg>
-                                    Duration: {test.duration}mins
-                                </p>
-                                <p className="cbt-meta-row">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
-                                        <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
-                                    </svg>
-                                    Questions: {test.questions}
-                                </p>
-                                <p className="cbt-meta-row">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
-                                        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
-                                    </svg>
-                                    Date of Test/Exam: {test.date}
-                                </p>
-                                {submitted ? (
-                                    <>
-                                        <p className="cbt-submitted-note">
-                                            ✓ You have already submitted this test/exam. You cannot take it again.
-                                        </p>
-                                        <button className="cbt-start-btn cbt-start-btn--submitted" disabled>
+                            <div className="cbt-card" key={test._id || test.id}>
+                                <div className="cbt-card-header">
+                                    <p className="cbt-card-subject">{test.subject}</p>
+                                    <p className="cbt-card-type">{test.description}</p>
+                                </div>
+                                <div className="cbt-card-body">
+                                    <p className="cbt-meta-row">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                                        </svg>
+                                        Duration: {test.duration}mins
+                                    </p>
+                                    <p className="cbt-meta-row">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+                                            <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
+                                        </svg>
+                                        Questions: {test.questions}
+                                    </p>
+                                    <p className="cbt-meta-row">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+                                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" />
+                                        </svg>
+                                        Date of Test/Exam: {test.date}
+                                    </p>
+                                    {submitted ? (
+                                        <>
+                                            <p className="cbt-submitted-note">
+                                                ✓ You have already submitted this test/exam. You cannot take it again.
+                                            </p>
+                                            <button className="cbt-start-btn cbt-start-btn--submitted" disabled>
+                                                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                                </svg>
+                                                Submitted
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <button className="cbt-start-btn" onClick={() => handleStartTest(test)}>
                                             <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-                                                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                                <path d="M8 5v14l11-7z" />
                                             </svg>
-                                            Submitted
+                                            Start Test/Exam
                                         </button>
-                                    </>
-                                ) : (
-                                <button className="cbt-start-btn" onClick={() => handleStartTest(test)}>
-                                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
-                                        <path d="M8 5v14l11-7z" />
-                                    </svg>
-                                    Start Test/Exam
-                                </button>
-                                )}
+                                    )}
+                                </div>
                             </div>
-                        </div>
                         );
                     })}
                 </div>

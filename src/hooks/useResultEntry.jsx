@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useMeta } from "./useMeta";
 import { useStaffMeta } from "./useStaffMeta";
 
-export const RESULT_BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+export const RESULT_BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 export const FALLBACK_SUBJECT_OPTIONS = [
     "Mathematics", "English Language", "Basic Science", "Basic Technology",
@@ -164,9 +164,9 @@ export function useResultEntry(portal = "staff", studentId, incoming = {}) {
     const metaSubjectNames = normSubjectNames(metaClassSubjects);
     const subjectOptions =
         liveClassSubjects.length > 0 ? liveClassSubjects
-        : offeredSubjects.length > 0 ? offeredSubjects
-        : metaSubjectNames.length > 0 ? metaSubjectNames
-        : FALLBACK_SUBJECT_OPTIONS;
+            : offeredSubjects.length > 0 ? offeredSubjects
+                : metaSubjectNames.length > 0 ? metaSubjectNames
+                    : FALLBACK_SUBJECT_OPTIONS;
     const usingFallbackSubjects =
         liveClassSubjects.length === 0 && offeredSubjects.length === 0 && metaSubjectNames.length === 0;
     const offeredSet = new Set(subjectOptions.map((s) => String(s).toUpperCase()));
@@ -194,7 +194,7 @@ export function useResultEntry(portal = "staff", studentId, incoming = {}) {
         setClassSubjectsLoading(true);
         fetchClassSubjects(studentClassLabel)
             .then((list) => { if (!cancelled && list.length > 0) setLiveClassSubjects(list); })
-            .catch(() => {})
+            .catch(() => { })
             .finally(() => { if (!cancelled) setClassSubjectsLoading(false); });
         return () => { cancelled = true; };
         // eslint-disable-next-line react-hooks/exhaustive-deps

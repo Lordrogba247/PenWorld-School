@@ -4,7 +4,7 @@ import "./9CBT.css";
 import { useStaffMeta } from "../../hooks/useStaffMeta";
 import CbtResultsModal from "../CbtResultsModal";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 // Same liveness rule as Admin/Student: expired, deactivated, closed-status,
 // or past scheduled date => Closed. Otherwise Active.

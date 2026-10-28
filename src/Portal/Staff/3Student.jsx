@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./3Student.css";
 import AddStudentModal from "./4Add";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 export default function StudentsList() {
     const [staff, setStaff] = useState({ assignedClass: "" });

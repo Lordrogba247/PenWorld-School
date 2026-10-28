@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import "./CbtResultsModal.css";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 // role: "admin" | "teacher" — decides which route prefix to hit
 // (admin -> /api/admin/cbt/:id/results, teacher -> /api/teacher/cbt/:id/results)

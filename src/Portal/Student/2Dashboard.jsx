@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./2Dashboard.css";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 // Static icon config — counts come from API. `key` maps to the matching stats field name.
 const statConfig = [

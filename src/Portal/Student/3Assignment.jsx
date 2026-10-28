@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "./3Assignment.css";
 import api from "../../api";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 function resolveFileUrl(url) {
     if (!url) return "";
@@ -40,10 +40,10 @@ function getTeacherAttachments(assignment) {
         if (skipKeys.has(k) || knownKeys.includes(k)) continue;
         if (typeof v === "string" && v.length > 3 &&
             (/^(https?:\/\/|\/|uploads?\/|files?\/|attachments?\/|documents?\/)/i.test(v) ||
-             /\.(pdf|docx?|xlsx?|pptx?|txt|png|jpe?g|gif|webp|zip|rar|csv)$/i.test(v))) {
+                /\.(pdf|docx?|xlsx?|pptx?|txt|png|jpe?g|gif|webp|zip|rar|csv)$/i.test(v))) {
             candidates.push(v);
         } else if (v && typeof v === "object" && !Array.isArray(v) &&
-                   (v.url || v.path || v.link || v.href || v.secure_url || v.secureUrl)) {
+            (v.url || v.path || v.link || v.href || v.secure_url || v.secureUrl)) {
             candidates.push(v);
         } else if (Array.isArray(v) && v.length > 0 && /attach|file|doc|upload|media|resource/i.test(k)) {
             candidates.push(...v);

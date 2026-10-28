@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useStaffMeta } from "../../hooks/useStaffMeta";
 import "./7Result.css";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 // Fallback only — used if useStaffMeta fails for some reason.
 // Keep in sync with newly created academic sessions.

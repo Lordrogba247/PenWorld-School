@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import "./6OnlineClass.css";
 import { useStaffMeta } from "../../hooks/useStaffMeta";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 export default function StaffOnlineClass() {
     const { classes: classOptions, getSubjectsForClass, loading: metaLoading } = useStaffMeta();

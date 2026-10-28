@@ -1,0 +1,390 @@
+/* ===== Bulk Data (Admin) ===== */
+
+.ad-bulk {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: calc(100vh - 56px);
+}
+
+/* ---- Tabs ---- */
+
+.ad-tabs {
+  display: flex;
+  gap: 4px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 4px;
+}
+
+.ad-tab {
+  border: none;
+  background: transparent;
+  padding: 9px 16px;
+  border-radius: 8px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ad-tab--active {
+  background: #002662;
+  color: #ffffff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* ---- Page body ---- */
+
+.ad-bulk-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ad-bulk-import {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ---- Cards ---- */
+
+.ad-bulk-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.ad-bulk-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.ad-bulk-label {
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ad-bulk-select-input {
+  padding: 9px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: #002662;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.ad-bulk-select-input:focus {
+  outline: none;
+  border-color: #9a76c8;
+  box-shadow: 0 0 0 2px rgba(154, 118, 200, 0.25);
+}
+
+/* ---- Action buttons ---- */
+
+.ad-bulk-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ad-bulk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background: #ffffff;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #002662;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ad-bulk-btn:hover {
+  border-color: #9a76c8;
+  background: #f5f1fa;
+}
+
+.ad-bulk-btn--primary {
+  background: #002662;
+  color: #ffffff;
+  border-color: #002662;
+}
+
+.ad-bulk-btn--primary:hover {
+  background: #0a3680;
+  border-color: #0a3680;
+}
+
+/* ---- Dropzone ---- */
+
+.bdz-zone {
+  position: relative;
+  border: 2px dashed #c8c8c8;
+  border-radius: 12px;
+  background: #fafafa;
+  transition: border-color 0.15s, background 0.15s;
+  cursor: pointer;
+}
+
+.bdz-zone:hover,
+.bdz-zone:focus-within {
+  border-color: #9a76c8;
+}
+
+.bdz-zone:focus-within {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(154, 118, 200, 0.3);
+}
+
+.bdz-zone--active {
+  border-color: #002662;
+  background: rgba(0, 38, 98, 0.06);
+}
+
+.bdz-zone--reject {
+  border-color: #d93025;
+  background: rgba(217, 48, 37, 0.06);
+}
+
+.bdz-zone-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 26px 20px;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bdz-zone-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  color: #002662;
+}
+
+.bdz-zone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+}
+
+.bdz-zone-title {
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #002662;
+  margin: 0;
+}
+
+.bdz-zone-sub {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+}
+
+.bdz-zone-meta {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: #555;
+  margin-top: 6px;
+}
+
+.bdz-file-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px 6px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  font-size: 13px;
+}
+
+.bdz-file-name {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bdz-file-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #888;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.bdz-file-remove:hover {
+  background: #f5f1fa;
+  color: #002662;
+}
+
+.bdz-placeholder {
+  color: #999;
+}
+
+/* ---- Messages ---- */
+
+.ad-bulk-error {
+  background: #fdecea;
+  border: 1px solid #f5c6c2;
+  color: #8a1f1f;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.ad-bulk-info {
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+}
+
+.ad-bulk-info--success {
+  background: #e9f7ef;
+  border: 1px solid #b7e1c1;
+  color: #14532d;
+}
+
+.ad-bulk-info--warn {
+  background: #fff7e6;
+  border: 1px solid #f3d9a4;
+  color: #7a4b00;
+}
+
+/* ---- Preview table ---- */
+
+.ad-bulk-preview-card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.ad-bulk-preview-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ad-bulk-preview-count {
+  margin: 0;
+  font-size: 13px;
+  color: #444;
+}
+
+.ad-bulk-preview-type {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  background: #f0f0f0;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.ad-bulk-table-wrap {
+  overflow-x: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+.ad-bulk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: "Segoe UI", "Roboto", sans-serif;
+}
+
+.ad-bulk-table th,
+.ad-bulk-table td {
+  border-bottom: 1px solid #ececec;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.ad-bulk-table thead th {
+  background: #f5f1fa;
+  color: #002662;
+  font-weight: 600;
+}
+
+.ad-bulk-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.ad-bulk-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.ad-bulk-preview-note {
+  margin: 12px 0 0;
+  font-size: 12px;
+  color: #666;
+}
+
+/* ---- Export placeholder ---- */
+
+.ad-bulk-export,
+.ad-bulk-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  border: 2px dashed #e0e0e0;
+  border-radius: 12px;
+  color: #555;
+  gap: 8px;
+}
+
+.ad-bulk-empty-hint {
+  font-size: 13px;
+  color: #666;
+  max-width: 520px;
+}

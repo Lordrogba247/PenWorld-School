@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "./7Assignment.css";
 import { useMeta } from "../../hooks/useMeta";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 const emptyForm = { subject: "", classLabel: "", instructions: "", dueDate: "" };
 

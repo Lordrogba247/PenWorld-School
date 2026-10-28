@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "./5Assignment.css";
 import { useStaffMeta } from "../../hooks/useStaffMeta";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 export default function StaffAssignment() {
     const { classes: classOptions, getSubjectsForClass, loading: metaLoading } = useStaffMeta();

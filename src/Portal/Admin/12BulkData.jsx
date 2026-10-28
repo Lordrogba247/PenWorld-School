@@ -1,0 +1,268 @@
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { BULK_FORMS, downloadTemplate, parseFile } from "../../utils/bulkParser";
+
+import "./12BulkData.css";
+
+const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+
+// Windows often reports .csv files as application/vnd.ms-excel, so allow that too.
+const ACCEPT = {
+  "text/csv": [".csv"],
+  "application/vnd.ms-excel": [".csv"],
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+};
+
+function rejectionMessage(rejection) {
+  const code = rejection?.errors?.[0]?.code;
+  if (code === "file-too-large") return "This file is too large. The maximum size is 5MB.";
+  if (code === "too-many-files") return "Please upload one file at a time.";
+  return "Wrong file type. Please upload a .csv or .xlsx file.";
+}
+
+function DropzoneZone({ onDrop, fileName, onRemove }) {
+  const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
+    accept: ACCEPT,
+    maxSize: MAX_SIZE,
+    multiple: false,
+    onDrop,
+  });
+
+  const zoneClass = [
+    "bdz-zone",
+    isDragActive ? "bdz-zone--active" : "",
+    isDragReject ? "bdz-zone--reject" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return (
+    <div className={zoneClass} {...getRootProps()}>
+      <input {...getInputProps()} aria-label="Upload file" />
+      <div className="bdz-zone-card">
+        <div className="bdz-zone-mark">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28" aria-hidden="true">
+            <path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z" />
+          </svg>
+        </div>
+        <div className="bdz-zone-text">
+          <p className="bdz-zone-title">
+            {isDragActive ? "Drop the file here ..." : "Drag & drop a file"}
+          </p>
+          <p className="bdz-zone-sub">
+            or click to choose a .csv or .xlsx file (max 5MB) · every cell is read as text
+          </p>
+        </div>
+        <div className="bdz-zone-meta">
+          {fileName ? (
+            <span className="bdz-file-chip">
+              <span className="bdz-file-name">{fileName}</span>
+              <button
+                type="button"
+                className="bdz-file-remove"
+                aria-label="Remove file"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove();
+                }}
+              >
+                ×
+              </button>
+            </span>
+          ) : (
+            <span className="bdz-placeholder">No file selected</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function AdminBulkData() {
+  const [activeTab, setActiveTab] = useState("import");
+  const [formType, setFormType] = useState("student");
+  const [fileName, setFileName] = useState("");
+  const [parseResult, setParseResult] = useState(null);
+  const [info, setInfo] = useState("");
+  const [errors, setErrors] = useState([]);
+
+  const form = BULK_FORMS[formType];
+
+  const resetResult = () => {
+    setFileName("");
+    setParseResult(null);
+    setInfo("");
+    setErrors([]);
+  };
+
+  const handleDrop = async (accepted, rejections) => {
+    setInfo("");
+    setErrors([]);
+    setParseResult(null);
+
+    if (rejections.length > 0) {
+      setFileName("");
+      setErrors([rejectionMessage(rejections[0])]);
+      return;
+    }
+
+    const picked = accepted[0];
+    if (!picked) return;
+
+    setFileName(picked.name);
+    setInfo("Reading file ...");
+
+    try {
+      const result = await parseFile(picked, formType);
+      if (!result.ok) {
+        setFileName("");
+        setInfo("");
+        setErrors([result.error || "Could not read this file."]);
+        return;
+      }
+      setParseResult(result);
+      setInfo(
+        result.totalRows > 10
+          ? `${result.totalRows} rows read. Showing the first 10.`
+          : `${result.totalRows} row(s) read.`
+      );
+    } catch (err) {
+      setFileName("");
+      setInfo("");
+      setErrors([err.message || "Something went wrong while reading the file."]);
+    }
+  };
+
+  const handleDownloadTemplate = () => {
+    downloadTemplate(formType);
+  };
+
+  const handleTypeChange = (next) => {
+    setFormType(next);
+    resetResult();
+  };
+
+  const rows = parseResult?.preview || [];
+  const headers = parseResult?.headers || [];
+
+  return (
+    <div className="ad-page ad-bulk">
+      <h1 className="ad-title">Bulk Data</h1>
+      <p className="ad-sub">Import or export student &amp; staff records in bulk.</p>
+
+      <div className="ad-tabs">
+        <button
+          type="button"
+          className={`ad-tab ${activeTab === "import" ? "ad-tab--active" : ""}`}
+          onClick={() => setActiveTab("import")}
+        >
+          Import
+        </button>
+        <button
+          type="button"
+          className={`ad-tab ${activeTab === "export" ? "ad-tab--active" : ""}`}
+          onClick={() => setActiveTab("export")}
+        >
+          Export
+        </button>
+      </div>
+
+      <div className="ad-bulk-body">
+        {activeTab === "import" ? (
+          <div className="ad-bulk-import">
+            <div className="ad-bulk-card">
+              <div className="ad-bulk-select">
+                <label className="ad-bulk-label" htmlFor="bulk-form-type">
+                  Select record type
+                </label>
+                <select
+                  id="bulk-form-type"
+                  className="ad-bulk-select-input"
+                  value={formType}
+                  onChange={(e) => handleTypeChange(e.target.value)}
+                >
+                  {Object.entries(BULK_FORMS).map(([key, f]) => (
+                    <option key={key} value={key}>
+                      {f.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="ad-bulk-actions">
+                <button
+                  type="button"
+                  className="ad-bulk-btn ad-bulk-btn--primary"
+                  onClick={handleDownloadTemplate}
+                >
+                  Download {form.label} Template
+                </button>
+              </div>
+            </div>
+
+            <DropzoneZone onDrop={handleDrop} fileName={fileName} onRemove={resetResult} />
+
+            {errors.map((message, i) => (
+              <div key={i} className="ad-bulk-error">
+                {message}
+              </div>
+            ))}
+
+            {info && <div className="ad-bulk-info ad-bulk-info--success">{info}</div>}
+
+            {parseResult?.warnings.map((message, i) => (
+              <div key={i} className="ad-bulk-info ad-bulk-info--warn">
+                {message}
+              </div>
+            ))}
+
+            {parseResult && headers.length > 0 && (
+              <div className="ad-bulk-preview-card">
+                <div className="ad-bulk-preview-head">
+                  <p className="ad-bulk-preview-count">
+                    {parseResult.totalRows > 10
+                      ? `Rows 1–10 of ${parseResult.totalRows}`
+                      : `All ${parseResult.totalRows} row(s) shown`}
+                  </p>
+                  <span className="ad-bulk-preview-type">{parseResult.fileType}</span>
+                </div>
+                <div className="ad-bulk-table-wrap">
+                  <table className="ad-bulk-table">
+                    <thead>
+                      <tr>
+                        {headers.map((h) => (
+                          <th key={h}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((row, ri) => (
+                        <tr key={ri}>
+                          {headers.map((h) => (
+                            <td key={h}>{row[h]}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="ad-bulk-preview-note">
+                  Showing the first 10 rows (out of {parseResult.totalRows}). All cells are read as
+                  text.
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="ad-bulk-export ad-bulk-empty">
+            <p>Export is not implemented yet.</p>
+            <p className="ad-bulk-empty-hint">
+              This placeholder will show the filters and the Export to CSV / Excel buttons in a
+              later phase.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

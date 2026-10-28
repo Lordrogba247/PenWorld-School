@@ -4,7 +4,7 @@ import "./10CBT.css";
 import { useMeta } from "../../hooks/useMeta";
 import CbtResultsModal from "../CbtResultsModal";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 // Card colors alternate purple/red
 const cardAccents = ["purple", "red"];

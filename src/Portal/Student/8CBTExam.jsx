@@ -9,7 +9,7 @@ import {
     markTestSubmitted,
 } from "./cbtSubmitGuard";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 // Fullscreen exam page — rendered OUTSIDE StudentLayout (see App.jsx),
 // so no sidebar/topbar shows. Includes its own minimal brand header + auth guard.
@@ -541,96 +541,96 @@ export default function StudentCBTExam() {
                 <span className="cbtx-brand-timer">{formatTime(secondsLeft)}</span>
             </div>
             <div className="cbtx-page cbtx-page--locked">
-            <div className="cbtx-header">
-                <div>
-                    <h1 className="cbtx-subject">{examData?.subject}</h1>
-                    <p className="cbtx-progress">
-                        Question {currentIndex + 1} of {questions.length} &nbsp;·&nbsp; {answeredCount} answered
-                    </p>
-                </div>
-                <div className="cbtx-timer">{formatTime(secondsLeft)}</div>
-            </div>
-
-            {submitError && <p className="cbtx-error">{submitError}</p>}
-
-            {currentQuestion && (
-                <div className="cbtx-question-card">
-                    <p className="cbtx-question-text">{currentQuestion.text}</p>
-                    <div className="cbtx-options">
-                        {currentQuestion.options.map((opt) => {
-                            const letter = opt.trim().charAt(0);
-                            const isSelected = answers[currentQuestion.id] === letter;
-                            return (
-                                <button
-                                    key={opt}
-                                    className={`cbtx-option ${isSelected ? "cbtx-option--selected" : ""}`}
-                                    onClick={() => handleSelectOption(currentQuestion.id, letter)}
-                                >
-                                    {opt}
-                                </button>
-                            );
-                        })}
+                <div className="cbtx-header">
+                    <div>
+                        <h1 className="cbtx-subject">{examData?.subject}</h1>
+                        <p className="cbtx-progress">
+                            Question {currentIndex + 1} of {questions.length} &nbsp;·&nbsp; {answeredCount} answered
+                        </p>
                     </div>
+                    <div className="cbtx-timer">{formatTime(secondsLeft)}</div>
                 </div>
-            )}
 
-            <div className="cbtx-nav">
-                <button
-                    className="cbtx-nav-btn"
-                    onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
-                    disabled={currentIndex === 0}
-                >
-                    Previous
-                </button>
+                {submitError && <p className="cbtx-error">{submitError}</p>}
 
-                {currentIndex < questions.length - 1 ? (
-                    <button
-                        className="cbtx-nav-btn cbtx-nav-btn--primary"
-                        onClick={() => setCurrentIndex((i) => Math.min(questions.length - 1, i + 1))}
-                    >
-                        Next
-                    </button>
-                ) : (
-                    <button className="cbtx-submit-btn" onClick={handleManualSubmit} disabled={submitting}>
-                        {submitting ? "Submitting..." : "Submit Test"}
-                    </button>
+                {currentQuestion && (
+                    <div className="cbtx-question-card">
+                        <p className="cbtx-question-text">{currentQuestion.text}</p>
+                        <div className="cbtx-options">
+                            {currentQuestion.options.map((opt) => {
+                                const letter = opt.trim().charAt(0);
+                                const isSelected = answers[currentQuestion.id] === letter;
+                                return (
+                                    <button
+                                        key={opt}
+                                        className={`cbtx-option ${isSelected ? "cbtx-option--selected" : ""}`}
+                                        onClick={() => handleSelectOption(currentQuestion.id, letter)}
+                                    >
+                                        {opt}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
                 )}
-            </div>
 
-            <div className="cbtx-jumper">
-                {questions.map((q, i) => (
+                <div className="cbtx-nav">
                     <button
-                        key={q.id}
-                        className={`cbtx-jumper-dot ${i === currentIndex ? "cbtx-jumper-dot--current" : ""} ${answers[q.id] ? "cbtx-jumper-dot--answered" : ""}`}
-                        onClick={() => setCurrentIndex(i)}
+                        className="cbtx-nav-btn"
+                        onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
+                        disabled={currentIndex === 0}
                     >
-                        {i + 1}
+                        Previous
                     </button>
-                ))}
-            </div>
 
-            {/* Violation warning modal */}
-            {violation && !violation.final && (
-                <div className="cbtx-violation-overlay">
-                    <div className="cbtx-violation-modal">
-                        <h3 className="cbtx-violation-title">⚠ Warning</h3>
-                        <p className="cbtx-violation-text">{violation.message}</p>
-                        <button className="cbtx-violation-btn" onClick={handleReturnToFullscreen}>
-                            Return to Fullscreen & Continue
+                    {currentIndex < questions.length - 1 ? (
+                        <button
+                            className="cbtx-nav-btn cbtx-nav-btn--primary"
+                            onClick={() => setCurrentIndex((i) => Math.min(questions.length - 1, i + 1))}
+                        >
+                            Next
                         </button>
-                    </div>
+                    ) : (
+                        <button className="cbtx-submit-btn" onClick={handleManualSubmit} disabled={submitting}>
+                            {submitting ? "Submitting..." : "Submit Test"}
+                        </button>
+                    )}
                 </div>
-            )}
 
-            {/* Final violation — submission already triggered, just inform them */}
-            {violation && violation.final && (
-                <div className="cbtx-violation-overlay">
-                    <div className="cbtx-violation-modal cbtx-violation-modal--final">
-                        <h3 className="cbtx-violation-title">Test Submitted</h3>
-                        <p className="cbtx-violation-text">{violation.message}</p>
-                    </div>
+                <div className="cbtx-jumper">
+                    {questions.map((q, i) => (
+                        <button
+                            key={q.id}
+                            className={`cbtx-jumper-dot ${i === currentIndex ? "cbtx-jumper-dot--current" : ""} ${answers[q.id] ? "cbtx-jumper-dot--answered" : ""}`}
+                            onClick={() => setCurrentIndex(i)}
+                        >
+                            {i + 1}
+                        </button>
+                    ))}
                 </div>
-            )}
+
+                {/* Violation warning modal */}
+                {violation && !violation.final && (
+                    <div className="cbtx-violation-overlay">
+                        <div className="cbtx-violation-modal">
+                            <h3 className="cbtx-violation-title">⚠ Warning</h3>
+                            <p className="cbtx-violation-text">{violation.message}</p>
+                            <button className="cbtx-violation-btn" onClick={handleReturnToFullscreen}>
+                                Return to Fullscreen & Continue
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* Final violation — submission already triggered, just inform them */}
+                {violation && violation.final && (
+                    <div className="cbtx-violation-overlay">
+                        <div className="cbtx-violation-modal cbtx-violation-modal--final">
+                            <h3 className="cbtx-violation-title">Test Submitted</h3>
+                            <p className="cbtx-violation-text">{violation.message}</p>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

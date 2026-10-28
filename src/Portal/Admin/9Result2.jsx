@@ -5,7 +5,7 @@ import schoolLogo from "../../assets/logo3.png";
 import principalSign from "../../assets/sign1.png";
 import lowerSign from "../../assets/sign2.png";
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 const schoolInfo = {
     name: "PenWorld College & PRIMARY SCHOOL",

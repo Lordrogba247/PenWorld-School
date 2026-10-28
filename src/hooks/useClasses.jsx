@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-export const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+export const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 export const DIVISION_SUFFIX = / (Gaa-Akanbi|Amoyo)$/;
 
 const Ctx = createContext(null);

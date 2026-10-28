@@ -45,7 +45,8 @@ import AdminResultsList from './Portal/Admin/9Result'
 import AdminResultView from './Portal/Admin/9Result2'
 import AdminResultEntry from './Portal/Admin/9Result3'
 import AdminCBT from './Portal/Admin/10CBT'
-import AdminProfile from './Portal/Admin/11Profile'
+import AdminProfile from './Portal/Admin/11Profile';
+import AdminBulkData from './Portal/Admin/12BulkData';
 
 // Landing pages go use this wrapper — Navbar + Footer show here only
 function LandingLayout({ children }) {
@@ -118,6 +119,7 @@ function App() {
           <Route path="results/:studentId/edit" element={<AdminResultEntry />} />
           <Route path="cbt" element={<AdminCBT />} />
           <Route path="profile" element={<AdminProfile />} />
+          <Route path="bulk-data" element={<AdminBulkData />} />
         </Route>
       </Routes>
     </BrowserRouter>

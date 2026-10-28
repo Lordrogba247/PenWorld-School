@@ -4,7 +4,7 @@ import "./1Login.css";
 import logo from "../../assets/logo2.png";
 
 
-const BASE_URL = "https://penworld-demo-school-backend.vercel.app";
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
 export default function StudentLogin() {
     const navigate = useNavigate();
