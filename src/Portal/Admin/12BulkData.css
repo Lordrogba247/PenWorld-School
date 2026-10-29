@@ -28,7 +28,9 @@
   font-weight: 600;
   color: #666;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .ad-tab--active {
@@ -114,7 +116,9 @@
   font-weight: 600;
   color: #002662;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
 }
 
 .ad-bulk-btn:hover {
@@ -140,7 +144,9 @@
   border: 2px dashed #c8c8c8;
   border-radius: 12px;
   background: #fafafa;
-  transition: border-color 0.15s, background 0.15s;
+  transition:
+    border-color 0.15s,
+    background 0.15s;
   cursor: pointer;
 }
 
@@ -387,4 +393,126 @@
   font-size: 13px;
   color: #666;
   max-width: 520px;
+}
+
+/* ---- Phase 2: validation summary, errors, pagination ---- */
+
+.ad-bulk-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ad-bulk-btn:disabled:hover {
+  background: #ffffff;
+  border-color: #d9d9d9;
+}
+
+.ad-bulk-btn--primary:disabled:hover {
+  background: #002662;
+  border-color: #002662;
+}
+
+.ad-bulk-summary {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.ad-bulk-summary-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 110px;
+  padding: 10px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.ad-bulk-summary-value {
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #002662;
+}
+
+.ad-bulk-summary-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.ad-bulk-summary-item--ok {
+  background: #e9f7ef;
+  border-color: #b7e1c1;
+}
+
+.ad-bulk-summary-item--ok .ad-bulk-summary-value {
+  color: #14532d;
+}
+
+.ad-bulk-summary-item--err {
+  background: #fdecea;
+  border-color: #f5c6c2;
+}
+
+.ad-bulk-summary-item--err .ad-bulk-summary-value {
+  color: #8a1f1f;
+}
+
+.ad-bulk-check-row {
+  margin-bottom: 12px;
+}
+
+.ad-bulk-check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #444;
+  cursor: pointer;
+}
+
+.ad-bulk-th-num,
+.ad-bulk-cell-num {
+  width: 52px;
+  color: #666;
+  font-weight: 600;
+}
+
+.ad-bulk-table-row--invalid {
+  background: #fff5f4;
+}
+
+.ad-bulk-table tbody tr.ad-bulk-table-row--invalid:hover {
+  background: #ffecea;
+}
+
+.ad-bulk-cell--invalid {
+  outline: 2px solid #d93025;
+  outline-offset: -2px;
+  background: #fdecea;
+}
+
+.ad-bulk-th-errors {
+  min-width: 260px;
+}
+
+.ad-bulk-cell-errors {
+  white-space: normal !important;
+  min-width: 260px;
+  color: #8a1f1f;
+  font-size: 12px;
+}
+
+.ad-bulk-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.ad-bulk-pagination-count {
+  font-size: 13px;
+  color: #444;
 }

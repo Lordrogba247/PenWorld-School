@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { BULK_FORMS, downloadTemplate, parseFile } from "../../utils/bulkParser";
+import { validateRows } from "../../utils/bulkValidation";
 
 import "./12BulkData.css";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const PAGE_SIZE = 25;
 
 // Windows often reports .csv files as application/vnd.ms-excel, so allow that too.
 const ACCEPT = {
@@ -83,22 +85,34 @@ export default function AdminBulkData() {
   const [formType, setFormType] = useState("student");
   const [fileName, setFileName] = useState("");
   const [parseResult, setParseResult] = useState(null);
+  const [validation, setValidation] = useState(null); // { results, validRows, invalidRows, summary }
   const [info, setInfo] = useState("");
   const [errors, setErrors] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showErrorsOnly, setShowErrorsOnly] = useState(false);
+  const [continueMessage, setContinueMessage] = useState("");
 
   const form = BULK_FORMS[formType];
 
   const resetResult = () => {
     setFileName("");
     setParseResult(null);
+    setValidation(null);
     setInfo("");
     setErrors([]);
+    setCurrentPage(1);
+    setShowErrorsOnly(false);
+    setContinueMessage("");
   };
 
   const handleDrop = async (accepted, rejections) => {
+    setParseResult(null);
+    setValidation(null);
     setInfo("");
     setErrors([]);
-    setParseResult(null);
+    setCurrentPage(1);
+    setShowErrorsOnly(false);
+    setContinueMessage("");
 
     if (rejections.length > 0) {
       setFileName("");
@@ -120,11 +134,16 @@ export default function AdminBulkData() {
         setErrors([result.error || "Could not read this file."]);
         return;
       }
+
+      const checked = validateRows(formType, result.rows);
       setParseResult(result);
+      setValidation(checked);
+
+      const { total, valid, invalid } = checked.summary;
       setInfo(
-        result.totalRows > 10
-          ? `${result.totalRows} rows read. Showing the first 10.`
-          : `${result.totalRows} row(s) read.`
+        invalid === 0
+          ? `${total} row(s) read. All rows are valid.`
+          : `${total} row(s) read: ${valid} valid, ${invalid} with errors.`
       );
     } catch (err) {
       setFileName("");
@@ -133,17 +152,31 @@ export default function AdminBulkData() {
     }
   };
 
-  const handleDownloadTemplate = () => {
-    downloadTemplate(formType);
-  };
-
   const handleTypeChange = (next) => {
     setFormType(next);
     resetResult();
   };
 
-  const rows = parseResult?.preview || [];
+  const handleContinue = () => {
+    if (!validation || validation.validRows.length === 0) return;
+    setContinueMessage(`Ready to upload ${validation.validRows.length} row(s).`);
+  };
+
+  // Rows shown in the table (all rows, or only the ones with errors).
+  const visibleRows = useMemo(() => {
+    if (!validation) return [];
+    return showErrorsOnly
+      ? validation.results.filter((r) => r.errors.length > 0)
+      : validation.results;
+  }, [validation, showErrorsOnly]);
+
+  const totalPages = Math.max(1, Math.ceil(visibleRows.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const pageRows = visibleRows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
   const headers = parseResult?.headers || [];
+  const summary = validation?.summary;
+  const validCount = validation ? validation.validRows.length : 0;
 
   return (
     <div className="ad-page ad-bulk">
@@ -193,9 +226,20 @@ export default function AdminBulkData() {
                 <button
                   type="button"
                   className="ad-bulk-btn ad-bulk-btn--primary"
-                  onClick={handleDownloadTemplate}
+                  onClick={() => downloadTemplate(formType)}
                 >
                   Download {form.label} Template
+                </button>
+                <button type="button" className="ad-bulk-btn" onClick={resetResult}>
+                  Upload a different file
+                </button>
+                <button
+                  type="button"
+                  className="ad-bulk-btn ad-bulk-btn--primary"
+                  onClick={handleContinue}
+                  disabled={validCount === 0}
+                >
+                  Continue with valid rows only
                 </button>
               </div>
             </div>
@@ -216,41 +260,116 @@ export default function AdminBulkData() {
               </div>
             ))}
 
-            {parseResult && headers.length > 0 && (
+            {validation && headers.length > 0 && (
               <div className="ad-bulk-preview-card">
-                <div className="ad-bulk-preview-head">
-                  <p className="ad-bulk-preview-count">
-                    {parseResult.totalRows > 10
-                      ? `Rows 1–10 of ${parseResult.totalRows}`
-                      : `All ${parseResult.totalRows} row(s) shown`}
-                  </p>
-                  <span className="ad-bulk-preview-type">{parseResult.fileType}</span>
+                <div className="ad-bulk-summary">
+                  <div className="ad-bulk-summary-item">
+                    <span className="ad-bulk-summary-value">{summary.total}</span>
+                    <span className="ad-bulk-summary-label">Total rows</span>
+                  </div>
+                  <div className="ad-bulk-summary-item ad-bulk-summary-item--ok">
+                    <span className="ad-bulk-summary-value">{summary.valid}</span>
+                    <span className="ad-bulk-summary-label">Valid</span>
+                  </div>
+                  <div className="ad-bulk-summary-item ad-bulk-summary-item--err">
+                    <span className="ad-bulk-summary-value">{summary.invalid}</span>
+                    <span className="ad-bulk-summary-label">Invalid</span>
+                  </div>
                 </div>
-                <div className="ad-bulk-table-wrap">
-                  <table className="ad-bulk-table">
-                    <thead>
-                      <tr>
-                        {headers.map((h) => (
-                          <th key={h}>{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rows.map((row, ri) => (
-                        <tr key={ri}>
+
+                <div className="ad-bulk-check-row">
+                  <label className="ad-bulk-check-label">
+                    <input
+                      type="checkbox"
+                      checked={showErrorsOnly}
+                      onChange={(e) => {
+                        setShowErrorsOnly(e.target.checked);
+                        setCurrentPage(1);
+                      }}
+                    />
+                    Show errors only
+                  </label>
+                </div>
+
+                {pageRows.length === 0 ? (
+                  <p className="ad-bulk-preview-note">No rows with errors.</p>
+                ) : (
+                  <div className="ad-bulk-table-wrap">
+                    <table className="ad-bulk-table">
+                      <thead>
+                        <tr>
+                          <th className="ad-bulk-th-num">Row</th>
                           {headers.map((h) => (
-                            <td key={h}>{row[h]}</td>
+                            <th key={h}>{h}</th>
                           ))}
+                          <th className="ad-bulk-th-errors">Errors</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {pageRows.map((row) => {
+                          const isInvalid = row.errors.length > 0;
+                          return (
+                            <tr
+                              key={row.rowNumber}
+                              className={isInvalid ? "ad-bulk-table-row--invalid" : ""}
+                            >
+                              <td className="ad-bulk-cell-num">{row.rowNumber}</td>
+                              {headers.map((h) => (
+                                <td
+                                  key={h}
+                                  className={
+                                    row.errors.some((e) => e.field === h)
+                                      ? "ad-bulk-cell--invalid"
+                                      : ""
+                                  }
+                                >
+                                  {row.data[h]}
+                                </td>
+                              ))}
+                              <td className="ad-bulk-cell-errors">
+                                {row.errors.map((e, i) => (
+                                  <div key={i}>{e.message}</div>
+                                ))}
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                <div className="ad-bulk-pagination">
+                  <button
+                    type="button"
+                    className="ad-bulk-btn"
+                    onClick={() => setCurrentPage(Math.max(1, safePage - 1))}
+                    disabled={safePage <= 1}
+                  >
+                    Previous
+                  </button>
+                  <span className="ad-bulk-pagination-count">
+                    Page {safePage} of {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    className="ad-bulk-btn"
+                    onClick={() => setCurrentPage(Math.min(totalPages, safePage + 1))}
+                    disabled={safePage >= totalPages}
+                  >
+                    Next
+                  </button>
                 </div>
+
                 <p className="ad-bulk-preview-note">
-                  Showing the first 10 rows (out of {parseResult.totalRows}). All cells are read as
-                  text.
+                  Row numbers match your spreadsheet. Rows with errors are highlighted in red and the
+                  Errors column says what to fix.
                 </p>
               </div>
+            )}
+
+            {continueMessage && (
+              <div className="ad-bulk-info ad-bulk-info--success">{continueMessage}</div>
             )}
           </div>
         ) : (

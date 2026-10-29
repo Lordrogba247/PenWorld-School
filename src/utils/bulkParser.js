@@ -64,25 +64,30 @@ export function downloadTemplate(formType) {
 }
 
 // Both readers return an array of rows, each row an array of cell values.
+// Blank lines are kept here so row numbers match the spreadsheet; they are
+// dropped later in parseFile().
 async function readCsv(file) {
   const text = await file.text();
-  const result = Papa.parse(text, { skipEmptyLines: "greedy" });
-  return result.data;
+  const result = Papa.parse(text, { skipEmptyLines: false });
+  return { table: result.data, firstRowNumber: 1 };
 }
 
 async function readXlsx(file) {
   const buffer = await file.arrayBuffer();
   const workbook = XLSX.read(buffer, { type: "array", cellDates: true });
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
-  if (!sheet) return [];
+  if (!sheet) return { table: [], firstRowNumber: 1 };
+  // Excel may start the used range below row 1; remember where it starts.
+  const firstRowNumber = sheet["!ref"] ? XLSX.utils.decode_range(sheet["!ref"]).s.r + 1 : 1;
   // raw:true keeps text cells as text and gives real Date objects for date
   // cells; toText() turns those into YYYY-MM-DD.
-  return XLSX.utils.sheet_to_json(sheet, {
+  const table = XLSX.utils.sheet_to_json(sheet, {
     header: 1,
     defval: "",
     raw: true,
-    blankrows: false,
+    blankrows: true,
   });
+  return { table, firstRowNumber };
 }
 
 // Returns { ok, error?, fileType?, headers?, rows?, totalRows?, preview?, warnings? }
@@ -92,15 +97,15 @@ export async function parseFile(file, formType) {
 
   const name = (file.name || "").toLowerCase();
   let fileType;
-  let table;
+  let loaded;
 
   try {
     if (name.endsWith(".csv")) {
       fileType = "csv";
-      table = await readCsv(file);
+      loaded = await readCsv(file);
     } else if (name.endsWith(".xlsx")) {
       fileType = "xlsx";
-      table = await readXlsx(file);
+      loaded = await readXlsx(file);
     } else {
       return { ok: false, error: "Unsupported file type. Please upload a .csv or .xlsx file." };
     }
@@ -111,12 +116,15 @@ export async function parseFile(file, formType) {
     };
   }
 
-  table = table.filter((cells) => cells.some((c) => toText(c) !== ""));
+  // Keep the spreadsheet row number of every row, then drop blank rows.
+  const numbered = loaded.table
+    .map((cells, i) => ({ cells, rowNumber: loaded.firstRowNumber + i }))
+    .filter((r) => r.cells.some((c) => toText(c) !== ""));
 
-  if (table.length === 0) {
+  if (numbered.length === 0) {
     return { ok: false, error: "The file is empty (no rows found)." };
   }
-  if (table.length === 1) {
+  if (numbered.length === 1) {
     return { ok: false, error: "The file has a header row but no data rows below it." };
   }
 
@@ -128,7 +136,7 @@ export async function parseFile(file, formType) {
 
   const columnIndex = {};
   const unknownColumns = [];
-  table[0].forEach((rawHeader, i) => {
+  numbered[0].cells.forEach((rawHeader, i) => {
     const canonical = keyToCanonical[headerKey(rawHeader)];
     if (canonical) {
       if (!(canonical in columnIndex)) columnIndex[canonical] = i;
@@ -156,8 +164,8 @@ export async function parseFile(file, formType) {
     warnings.push(`Ignored column(s) that are not in the template: ${unknownColumns.join(", ")}.`);
   }
 
-  const rows = table.slice(1).map((cells) => {
-    const row = {};
+  const rows = numbered.slice(1).map(({ cells, rowNumber }) => {
+    const row = { rowNumber };
     form.headers.forEach((h) => {
       row[h] = h in columnIndex ? toText(cells[columnIndex[h]]) : "";
     });
