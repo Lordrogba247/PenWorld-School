@@ -10,9 +10,9 @@
 
 ---
 
-## Current state — NO backend calls yet (Phase 1 + Phase 2)
+## Current state — Phase 1 + Phase 2 client-side; Phase 3 calls new endpoints
 
-The frontend **does not call any backend endpoint** in Phase 1 or Phase 2. Everything is client-side:
+The frontend does not call any backend endpoint in Phase 1 or Phase 2. Everything is client-side:
 
 1. **Route** `/portal/admin/bulk-data` with sidebar link "Bulk Data" (added in `AdminLayout.jsx`, route in `App.jsx`).
 2. **Import tab** lets the admin choose "Students" or "Staff".
@@ -24,10 +24,10 @@ The frontend **does not call any backend endpoint** in Phase 1 or Phase 2. Every
    - Every cell is read as **text** so phone numbers keep leading zeros (e.g. `08031234567`).
    - Headers are trimmed and matched case-insensitively (spaces/underscores ignored).
 6. **Validation** runs in the browser via `zod` (`src/utils/bulkValidation.js`). Invalid rows are flagged with plain-English error messages and shown in a paginated preview table (25 rows/page).
-7. **"Continue with valid rows only"** button currently only saves valid rows in component state and shows a message. **No upload happens yet.**
+7. **"Continue with valid rows only"** shows a confirm step, then submits valid rows in batches of 100 to the backend via `src/services/bulkApi.js` (`importBatch`). Progress, cancel and a result summary are handled client-side. **Phase 3 calls the new bulk import endpoints below.**
 8. **Export tab** is a placeholder ("Export is not implemented yet"). No API call.
 
-**Bottom line:** You do not need to build anything yet. Backend work starts in Phase 3 (batched import submit) and a later phase (export). This document prepares you for Phase 3.
+**Bottom line:** Phase 1 and Phase 2 are fully client-side. Phase 3 adds batched import submit to the new endpoints below. A later phase adds export.
 
 ---
 
@@ -35,11 +35,13 @@ The frontend **does not call any backend endpoint** in Phase 1 or Phase 2. Every
 
 ### A) Bulk import students & staff
 
-- **Method:** `POST`
-- **URL:** `/api/admin/bulk-import`
+The frontend sends one request per batch of 100 rows, sequentially. The URL depends on the record type:
+
+- **Students:** `POST /api/admin/students/bulk`
+- **Staff:** `POST /api/admin/staff/bulk`
 - **Auth:** Bearer token (admin role required)
 - **Content-Type:** `application/json`
-- **Body:** object with `type` and `rows` array.
+- **Body:** `{ "rows": [ {...}, {...} ] }` — each row object uses the field names below plus an internal `rowNumber` (added by the frontend so the backend can identify which rows failed). The backend should ignore `rowNumber` for storage; it only echoes it back in `failed`.
 
 Conventions copied from existing API:
 - Base URL path style: `/api/admin/...` (matches `/api/admin/students`, `/api/admin/staff`).
@@ -53,7 +55,6 @@ Conventions copied from existing API:
 
 ```json
 {
-  "type": "students",
   "rows": [
     {
       "studentId": "PW/2026/001",
@@ -87,7 +88,6 @@ Conventions copied from existing API:
 
 ```json
 {
-  "type": "staff",
   "rows": [
     {
       "staffId": "STF-2026-010",
@@ -199,7 +199,7 @@ Notes:
 - `surname` + `otherNames` are the exact API field names (not `firstName`/`lastName`).
 - `studentClass` is the exact API create field name (filter param is `class`, but create body uses `studentClass`).
 - Phone fields must be stored as text, not number (leading zeros must survive).
-- The frontend strips the internal `rowNumber` field before sending; the backend should not expect it.
+- The frontend adds an internal `rowNumber` to every row it sends so the backend can identify which rows failed; the backend echoes it back in `failed` and should not store it.
 
 ---
 
@@ -228,7 +228,7 @@ Notes:
 
 ---
 
-**Files changed/created in Phases 1–2:**
-- Created: `src/utils/bulkParser.js`, `src/utils/bulkValidation.js`, `src/Portal/Admin/12BulkData.jsx`, `src/Portal/Admin/12BulkData.css`
-- Edited: `src/App.jsx` (route `bulk-data`), `src/Portal/Admin/AdminLayout.jsx` (sidebar link), `package.json` (deps: `react-dropzone`, `papaparse`, `zod`)
+**Files changed/created in Phases 1–3:**
+- Created: `src/utils/bulkParser.js`, `src/utils/bulkValidation.js`, `src/Portal/Admin/12BulkData.jsx`, `src/Portal/Admin/12BulkData.css`, `src/services/bulkApi.js`, `src/hooks/useBulkImport.js`
+- Edited: `src/App.jsx` (route `bulk-data`), `src/Portal/Admin/AdminLayout.jsx` (sidebar link), `src/Portal/Admin/12BulkData.jsx` (Phase 3 confirm/progress/results UI), `src/Portal/Admin/12BulkData.css` (Phase 3 styles), `package.json` (deps: `react-dropzone`, `papaparse`, `zod`)
 - No existing feature files were modified.

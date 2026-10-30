@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { BULK_FORMS, downloadTemplate, parseFile } from "../../utils/bulkParser";
 import { validateRows } from "../../utils/bulkValidation";
+import { useBulkImport } from "../../hooks/useBulkImport";
 
 import "./12BulkData.css";
 
@@ -22,16 +23,17 @@ function rejectionMessage(rejection) {
   return "Wrong file type. Please upload a .csv or .xlsx file.";
 }
 
-function DropzoneZone({ onDrop, fileName, onRemove }) {
+function DropzoneZone({ onDrop, fileName, onRemove, disabled }) {
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     accept: ACCEPT,
     maxSize: MAX_SIZE,
     multiple: false,
-    onDrop,
+    onDrop: disabled ? undefined : onDrop,
   });
 
   const zoneClass = [
     "bdz-zone",
+    disabled ? "bdz-zone--disabled" : "",
     isDragActive ? "bdz-zone--active" : "",
     isDragReject ? "bdz-zone--reject" : "",
   ]
@@ -39,7 +41,7 @@ function DropzoneZone({ onDrop, fileName, onRemove }) {
     .join(" ");
 
   return (
-    <div className={zoneClass} {...getRootProps()}>
+    <div className={zoneClass} {!disabled ? getRootProps() : {}} aria-disabled={disabled}>
       <input {...getInputProps()} aria-label="Upload file" />
       <div className="bdz-zone-card">
         <div className="bdz-zone-mark">
@@ -91,8 +93,15 @@ export default function AdminBulkData() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showErrorsOnly, setShowErrorsOnly] = useState(false);
   const [continueMessage, setContinueMessage] = useState("");
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const form = BULK_FORMS[formType];
+
+  const bulk = useBulkImport({
+    type: formType,
+    validRows: validation ? validation.validRows : [],
+    invalidRows: validation ? validation.invalidRows : [],
+  });
 
   const resetResult = () => {
     setFileName("");
@@ -103,6 +112,8 @@ export default function AdminBulkData() {
     setCurrentPage(1);
     setShowErrorsOnly(false);
     setContinueMessage("");
+    setShowConfirm(false);
+    bulk.resetFlow();
   };
 
   const handleDrop = async (accepted, rejections) => {
@@ -113,6 +124,7 @@ export default function AdminBulkData() {
     setCurrentPage(1);
     setShowErrorsOnly(false);
     setContinueMessage("");
+    setShowConfirm(false);
 
     if (rejections.length > 0) {
       setFileName("");
@@ -159,8 +171,37 @@ export default function AdminBulkData() {
 
   const handleContinue = () => {
     if (!validation || validation.validRows.length === 0) return;
-    setContinueMessage(`Ready to upload ${validation.validRows.length} row(s).`);
+    setShowConfirm(true);
+    setContinueMessage("");
   };
+
+  const handleBackFromConfirm = () => {
+    setShowConfirm(false);
+  };
+
+  const handleStartImport = () => {
+    setShowConfirm(false);
+    bulk.startImport();
+  };
+
+  const handleImportAnother = () => {
+    resetResult();
+  };
+
+  // Warn if the user closes or refreshes the tab while an import is running.
+  useEffect(() => {
+    const onBeforeUnload = (e) => {
+      if (bulk.importing) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [bulk.importing]);
+
+  const isImporting = bulk.importing;
+  const disabled = isImporting;
 
   // Rows shown in the table (all rows, or only the ones with errors).
   const visibleRows = useMemo(() => {
@@ -188,6 +229,7 @@ export default function AdminBulkData() {
           type="button"
           className={`ad-tab ${activeTab === "import" ? "ad-tab--active" : ""}`}
           onClick={() => setActiveTab("import")}
+          disabled={disabled}
         >
           Import
         </button>
@@ -195,6 +237,7 @@ export default function AdminBulkData() {
           type="button"
           className={`ad-tab ${activeTab === "export" ? "ad-tab--active" : ""}`}
           onClick={() => setActiveTab("export")}
+          disabled={disabled}
         >
           Export
         </button>
@@ -227,24 +270,51 @@ export default function AdminBulkData() {
                   type="button"
                   className="ad-bulk-btn ad-bulk-btn--primary"
                   onClick={() => downloadTemplate(formType)}
+                  disabled={disabled}
                 >
                   Download {form.label} Template
                 </button>
-                <button type="button" className="ad-bulk-btn" onClick={resetResult}>
+                <button type="button" className="ad-bulk-btn" onClick={resetResult} disabled={disabled}>
                   Upload a different file
                 </button>
                 <button
                   type="button"
                   className="ad-bulk-btn ad-bulk-btn--primary"
                   onClick={handleContinue}
-                  disabled={validCount === 0}
+                  disabled={disabled || validCount === 0}
                 >
                   Continue with valid rows only
                 </button>
               </div>
+
+              {showConfirm && (
+                <div className="ad-bulk-confirm">
+                  <p className="ad-bulk-confirm-title">
+                    You are about to import {validCount} {form.label.toLowerCase()}
+                  </p>
+                  <p className="ad-bulk-confirm-note">
+                    {validation.invalidRows.length} row(s) skipped because they were invalid.
+                  </p>
+                  <div className="ad-bulk-actions">
+                    <button type="button" className="ad-bulk-btn" onClick={handleBackFromConfirm} disabled={disabled}>
+                      Back
+                    </button>
+                    <button
+                      type="button"
+                      className="ad-bulk-btn ad-bulk-btn--primary"
+                      onClick={handleStartImport}
+                      disabled={disabled}
+                    >
+                      Start Import
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <DropzoneZone onDrop={handleDrop} fileName={fileName} onRemove={resetResult} />
+            {!showConfirm && !isImporting && bulk.step !== "results" && (
+              <>
+                <DropzoneZone onDrop={handleDrop} fileName={fileName} onRemove={resetResult} />
 
             {errors.map((message, i) => (
               <div key={i} className="ad-bulk-error">
@@ -370,6 +440,103 @@ export default function AdminBulkData() {
 
             {continueMessage && (
               <div className="ad-bulk-info ad-bulk-info--success">{continueMessage}</div>
+            )}
+              </>
+            )}
+            {isImporting && (
+              <div className="ad-bulk-progress">
+                <p className="ad-bulk-progress-title">Importing {form.label} …</p>
+                <div className="ad-bulk-progress-bar">
+                  <div
+                    className="ad-bulk-progress-fill"
+                    style={{
+                      width:
+                        bulk.progress.total > 0
+                          ? (bulk.progress.done / bulk.progress.total) * 100
+                          : 0,
+                    }}
+                  ></div>
+                </div>
+                <p className="ad-bulk-progress-text">
+                  {bulk.progress.done} / {bulk.progress.total}
+                </p>
+                <button type="button" className="ad-bulk-btn" onClick={bulk.cancelImport}>
+                  Cancel
+                </button>
+              </div>
+            )}
+            {bulk.step === "results" && (
+              <div className="ad-bulk-results">
+                <h2 className="ad-bulk-results-title">Import complete</h2>
+                <div className="ad-bulk-results-cards">
+                  <div className="ad-bulk-result-card ad-bulk-result-card--imported">
+                    <span className="ad-bulk-result-value">{bulk.results.imported}</span>
+                    <span className="ad-bulk-result-label">Imported</span>
+                  </div>
+                  <div className="ad-bulk-result-card ad-bulk-result-card--updated">
+                    <span className="ad-bulk-result-value">{bulk.results.updated}</span>
+                    <span className="ad-bulk-result-label">Updated</span>
+                  </div>
+                  <div className="ad-bulk-result-card ad-bulk-result-card--skipped">
+                    <span className="ad-bulk-result-value">{bulk.results.skipped}</span>
+                    <span className="ad-bulk-result-label">Skipped (invalid)</span>
+                  </div>
+                  <div className="ad-bulk-result-card ad-bulk-result-card--failed">
+                    <span className="ad-bulk-result-value">{bulk.results.failed.length}</span>
+                    <span className="ad-bulk-result-label">Failed</span>
+                  </div>
+                </div>
+
+                {(bulk.results.failed.length > 0 || bulk.results.skipped > 0) && (
+                  <>
+                    <h3 className="ad-bulk-results-subtitle">Failed rows</h3>
+                    <div className="ad-bulk-results-list">
+                      <table className="ad-bulk-table">
+                        <thead>
+                          <tr>
+                            <th className="ad-bulk-th-num">Row</th>
+                            <th>Reason</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {bulk.results.skipped > 0 && (
+                            <tr>
+                              <td className="ad-bulk-cell-num" colSpan="2">
+                                {bulk.results.skipped} row(s) invalid in the file (see preview above).
+                              </td>
+                            </tr>
+                          )}
+                          {bulk.results.failed.map((f) => (
+                            <tr key={f.rowNumber}>
+                              <td className="ad-bulk-cell-num">{f.rowNumber}</td>
+                              <td>{f.reason}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {bulk.hasReportRows && (
+                      <button
+                        type="button"
+                        className="ad-bulk-btn ad-bulk-btn--primary"
+                        onClick={bulk.downloadErrorReport}
+                      >
+                        Download error report
+                      </button>
+                    )}
+                  </>
+                )}
+
+                <div className="ad-bulk-actions" style={{ marginTop: 16 }}>
+                  <button
+                    type="button"
+                    className="ad-bulk-btn ad-bulk-btn--primary"
+                    onClick={handleImportAnother}
+                  >
+                    Import another file
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         ) : (
