@@ -1,0 +1,31 @@
+curl -X POST "https://penworld-gloryseed-demo-school-back.vercel.app/api/admin/students/bulk" \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rows": [
+      {
+        "studentId": "PW/2026/015",
+        "surname": "Adeyemi",
+        "otherNames": "Toluwalase",
+        "sex": "F",
+        "studentClass": "JSS 1 Gaa-Akanbi",
+        "dateOfBirth": "2012-06-15",
+        "guardianName": "Mrs. Adeyemi",
+        "guardianPhone": "08031234567",
+        "guardianEmail": "adeyemi.m@example.com",
+        "address": "No 5, Oke-Ofa, Lagos State"
+      },
+      {
+        "studentId": "PW/2026/016",
+        "surname": "Ibrahim",
+        "otherNames": "Kelechi",
+        "sex": "M",
+        "studentClass": "Primary 4 Gaa-Akanbi",
+        "dateOfBirth": "2014-09-22",
+        "guardianName": "Mr. Ibrahim",
+        "guardianPhone": "08129807674",
+        "guardianEmail": "",
+        "address": "15 Emir Road, Ilorin, Kwara State"
+      }
+    ]
+  }'

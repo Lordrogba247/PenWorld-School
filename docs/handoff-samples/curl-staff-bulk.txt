@@ -1,0 +1,27 @@
+curl -X POST "https://penworld-gloryseed-demo-school-back.vercel.app/api/admin/staff/bulk" \
+  -H "Authorization: Bearer <admin-token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "rows": [
+      {
+        "staffId": "STF-2026-015",
+        "surname": "Okafor",
+        "otherNames": "Chinwe",
+        "sex": "F",
+        "role": "Teacher",
+        "email": "okafor.c@penworld.edu.ng",
+        "phone": "08038607740",
+        "subject": "English"
+      },
+      {
+        "staffId": "STF-2026-016",
+        "surname": "Bello",
+        "otherNames": "Adebayo",
+        "sex": "M",
+        "role": "Admin",
+        "email": "bello.a@penworld.edu.ng",
+        "phone": "+2348031234567",
+        "subject": ""
+      }
+    ]
+  }'

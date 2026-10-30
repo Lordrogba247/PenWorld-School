@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "data": {
+    "imported": 2,
+    "updated": 1,
+    "failed": [
+      {
+        "rowNumber": 6,
+        "reason": "Class not found"
+      }
+    ],
+    "totalRows": 3
+  },
+  "message": "Bulk import complete. 2 row(s) imported, 1 updated, 1 failed."
+}

@@ -1,0 +1,19 @@
+{
+  "success": true,
+  "data": {
+    "imported": 1,
+    "updated": 0,
+    "failed": [
+      {
+        "rowNumber": 3,
+        "reason": "Duplicate studentId (also in row 2)"
+      },
+      {
+        "rowNumber": 5,
+        "reason": "guardianPhone must be a valid Nigerian phone number"
+      }
+    ],
+    "totalRows": 5
+  },
+  "message": "Bulk import complete. 1 row(s) imported, 0 updated, 2 failed."
+}

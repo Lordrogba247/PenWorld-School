@@ -1,0 +1,38 @@
+[
+  {
+    "studentId": "PW/2026/015",
+    "surname": " Adeyemi",
+    "otherNames": " Toluwalase",
+    "sex": "F",
+    "studentClass": "JSS 1 Gaa-Akanbi",
+    "dateOfBirth": "2012-06-15",
+    "guardianName": "Mrs. Adeyemi",
+    "guardianPhone": "08031234567",
+    "guardianEmail": "adeyemi.m@example.com",
+    "address": "No 5, Oke-Ofa, Lagos State"
+  },
+  {
+    "studentId": "PW/2026/016",
+    "surname": " Ibrahim",
+    "otherNames": " Kelechi",
+    "sex": "M",
+    "studentClass": "Primary 4 Gaa-Akanbi",
+    "dateOfBirth": "2014-09-22",
+    "guardianName": "Mr. Ibrahim",
+    "guardianPhone": "08129807674",
+    "guardianEmail": "",
+    "address": "15 Emir Road, Ilorin, Kwara State"
+  },
+  {
+    "studentId": "PW/2026/017",
+    "surname": " Olaniyi",
+    "otherNames": " Adebola",
+    "sex": "F",
+    "studentClass": "SSS 2 Gaa-Akanbi",
+    "dateOfBirth": "2008-03-10",
+    "guardianName": "Mrs. Olaniyi",
+    "guardianPhone": "+2348057654321",
+    "guardianEmail": "olaniyi.fam@example.com",
+    "address": "No 12, Agodo-Egba, Ogun State"
+  }
+]
