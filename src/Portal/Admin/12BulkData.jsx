@@ -41,7 +41,7 @@ function DropzoneZone({ onDrop, fileName, onRemove, disabled }) {
     .join(" ");
 
   return (
-    <div className={zoneClass} {!disabled ? getRootProps() : {}} aria-disabled={disabled}>
+    <div className={zoneClass} {...(!disabled ? getRootProps() : {})} aria-disabled={disabled}>
       <input {...getInputProps()} aria-label="Upload file" />
       <div className="bdz-zone-card">
         <div className="bdz-zone-mark">
