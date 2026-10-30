@@ -528,6 +528,8 @@
 
 /* ---- Confirm panel ---- */
 
+/* ---- Confirm panel ---- */
+
 .ad-bulk-confirm {
   background: #fafafa;
   border: 1px solid #e0e0e0;
@@ -648,4 +650,132 @@
   max-height: 300px;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
+}
+
+/* ---- Phase 4: Export tab ---- */
+
+.ad-bulk-export {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ad-bulk-filters {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.ad-bulk-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ad-bulk-filter-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ad-bulk-filter-input {
+  padding: 9px 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-size: 14px;
+  color: #002662;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.ad-bulk-export-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.ad-bulk-export-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #002662;
+}
+
+.ad-bulk-export-loading {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+}
+
+.ad-bulk-export-note {
+  margin: 0;
+  font-size: 13px;
+  color: #8a1f1f;
+}
+
+.ad-bulk-column-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ad-bulk-column-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ad-bulk-column-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.ad-bulk-column-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #444;
+  cursor: pointer;
+}
+
+.ad-bulk-column-checkbox input {
+  width: 16px;
+  height: 16px;
+  accent-color: #002662;
+}
+
+.ad-bulk-column-checkbox--checked {
+  color: #002662;
+}
+
+.ad-bulk-export-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.ad-bulk-format-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ad-bulk-btn--disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ad-bulk-btn--disabled:hover {
+  background: #ffffff;
+  border-color: #d9d9d9;
 }

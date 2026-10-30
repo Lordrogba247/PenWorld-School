@@ -25,9 +25,9 @@ The frontend does not call any backend endpoint in Phase 1 or Phase 2. Everythin
    - Headers are trimmed and matched case-insensitively (spaces/underscores ignored).
 6. **Validation** runs in the browser via `zod` (`src/utils/bulkValidation.js`). Invalid rows are flagged with plain-English error messages and shown in a paginated preview table (25 rows/page).
 7. **"Continue with valid rows only"** shows a confirm step, then submits valid rows in batches of 100 to the backend via `src/services/bulkApi.js` (`importBatch`). Progress, cancel and a result summary are handled client-side. **Phase 3 calls the new bulk import endpoints below.**
-8. **Export tab** is a placeholder ("Export is not implemented yet"). No API call.
+8. **Export tab** lets the admin choose Students or Staff, filter by class/role and gender, pick columns, choose CSV or Excel format, and download. Data is read from the existing list endpoints (`GET /api/admin/students`, `GET /api/admin/staff`) via the project's axios instance. No new backend endpoints are needed for export.
 
-**Bottom line:** Phase 1 and Phase 2 are fully client-side. Phase 3 adds batched import submit to the new endpoints below. A later phase adds export.
+**Bottom line:** Phase 1 and Phase 2 are fully client-side. Phase 3 adds batched import submit to the new bulk import endpoints below. Phase 4 adds export using existing list endpoints. All filtering for export is done client-side (gender is not supported by the existing list endpoints).
 
 ---
 

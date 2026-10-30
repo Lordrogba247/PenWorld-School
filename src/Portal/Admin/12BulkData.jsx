@@ -3,6 +3,8 @@ import { useDropzone } from "react-dropzone";
 import { BULK_FORMS, downloadTemplate, parseFile } from "../../utils/bulkParser";
 import { validateRows } from "../../utils/bulkValidation";
 import { useBulkImport } from "../../hooks/useBulkImport";
+import api from "../../api";
+import { exportRows, prepareColumns } from "../../utils/bulkExport";
 
 import "./12BulkData.css";
 
@@ -95,8 +97,17 @@ export default function AdminBulkData() {
   const [continueMessage, setContinueMessage] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const form = BULK_FORMS[formType];
+  // ---- Export tab state ----
+  const [exportType, setExportType] = useState("student"); // "student" | "staff"
+  const [exportFilter, setExportFilter] = useState(""); // class / role
+  const [exportGender, setExportGender] = useState(""); // "" | "Male" | "Female"
+  const [exportColumns, setExportColumns] = useState(prepareColumns("student"));
+  const [exportFormat, setExportFormat] = useState("csv"); // "csv" | "xlsx"
+  const [exportRecords, setExportRecords] = useState([]);
+  const [exportLoading, setExportLoading] = useState(false);
+  const [exportRecordCount, setExportRecordCount] = useState(0);
 
+  const form = BULK_FORMS[formType];
   const bulk = useBulkImport({
     type: formType,
     validRows: validation ? validation.validRows : [],
@@ -202,6 +213,71 @@ export default function AdminBulkData() {
 
   const isImporting = bulk.importing;
   const disabled = isImporting;
+
+  // ---- Export tab: fetch + filter records from the existing API ----
+  useEffect(() => {
+    const allCols = prepareColumns(exportType);
+    setExportColumns(allCols);
+    setExportFilter("");
+    setExportGender("");
+    fetchExportRecords();
+  }, [exportType]);
+
+  const fetchExportRecords = useCallback(async () => {
+    setExportLoading(true);
+    try {
+      let url;
+      if (exportType === "student") {
+        url = exportFilter
+          ? `/api/admin/students?class=${encodeURIComponent(exportFilter)}`
+          : "/api/admin/students";
+      } else {
+        url = "/api/admin/staff";
+      }
+      const res = await api.get(url);
+      const raw = res.data && res.data.data ? res.data.data : res.data;
+      const records = Array.isArray(raw) ? raw : [];
+
+      // Client-side filters (gender is not supported by the existing endpoints).
+      const filtered = records.filter((r) => {
+        if (exportGender) {
+          const sex = r.sex === "M" ? "Male" : r.sex === "F" ? "Female" : r.sex || "";
+          if (sex !== exportGender) return false;
+        }
+        return true;
+      });
+
+      setExportRecords(filtered);
+      setExportRecordCount(filtered.length);
+    } catch (err) {
+      setExportRecords([]);
+      setExportRecordCount(0);
+    } finally {
+      setExportLoading(false);
+    }
+  }, [exportType, exportFilter, exportGender]);
+
+  const toggleExportColumn = useCallback((col) => {
+    setExportColumns((prev) => {
+      if (prev.includes(col)) return prev.filter((c) => c !== col);
+      return [...prev, col];
+    });
+  }, []);
+
+  const selectAllExportColumns = useCallback(() => {
+    setExportColumns(prepareColumns(exportType));
+  }, [exportType]);
+
+  const clearExportColumns = useCallback(() => {
+    setExportColumns([]);
+  }, []);
+
+  const handleExportDownload = useCallback(() => {
+    if (exportColumns.length === 0) return;
+    exportRows(exportType, exportRecords, exportColumns, exportFormat);
+  }, [exportType, exportRecords, exportColumns, exportFormat]);
+
+  const canExport = exportColumns.length > 0 && exportRecordCount > 0;
 
   // Rows shown in the table (all rows, or only the ones with errors).
   const visibleRows = useMemo(() => {
@@ -316,131 +392,131 @@ export default function AdminBulkData() {
               <>
                 <DropzoneZone onDrop={handleDrop} fileName={fileName} onRemove={resetResult} />
 
-            {errors.map((message, i) => (
-              <div key={i} className="ad-bulk-error">
-                {message}
-              </div>
-            ))}
-
-            {info && <div className="ad-bulk-info ad-bulk-info--success">{info}</div>}
-
-            {parseResult?.warnings.map((message, i) => (
-              <div key={i} className="ad-bulk-info ad-bulk-info--warn">
-                {message}
-              </div>
-            ))}
-
-            {validation && headers.length > 0 && (
-              <div className="ad-bulk-preview-card">
-                <div className="ad-bulk-summary">
-                  <div className="ad-bulk-summary-item">
-                    <span className="ad-bulk-summary-value">{summary.total}</span>
-                    <span className="ad-bulk-summary-label">Total rows</span>
+                {errors.map((message, i) => (
+                  <div key={i} className="ad-bulk-error">
+                    {message}
                   </div>
-                  <div className="ad-bulk-summary-item ad-bulk-summary-item--ok">
-                    <span className="ad-bulk-summary-value">{summary.valid}</span>
-                    <span className="ad-bulk-summary-label">Valid</span>
-                  </div>
-                  <div className="ad-bulk-summary-item ad-bulk-summary-item--err">
-                    <span className="ad-bulk-summary-value">{summary.invalid}</span>
-                    <span className="ad-bulk-summary-label">Invalid</span>
-                  </div>
-                </div>
+                ))}
 
-                <div className="ad-bulk-check-row">
-                  <label className="ad-bulk-check-label">
-                    <input
-                      type="checkbox"
-                      checked={showErrorsOnly}
-                      onChange={(e) => {
-                        setShowErrorsOnly(e.target.checked);
-                        setCurrentPage(1);
-                      }}
-                    />
-                    Show errors only
-                  </label>
-                </div>
+                {info && <div className="ad-bulk-info ad-bulk-info--success">{info}</div>}
 
-                {pageRows.length === 0 ? (
-                  <p className="ad-bulk-preview-note">No rows with errors.</p>
-                ) : (
-                  <div className="ad-bulk-table-wrap">
-                    <table className="ad-bulk-table">
-                      <thead>
-                        <tr>
-                          <th className="ad-bulk-th-num">Row</th>
-                          {headers.map((h) => (
-                            <th key={h}>{h}</th>
-                          ))}
-                          <th className="ad-bulk-th-errors">Errors</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {pageRows.map((row) => {
-                          const isInvalid = row.errors.length > 0;
-                          return (
-                            <tr
-                              key={row.rowNumber}
-                              className={isInvalid ? "ad-bulk-table-row--invalid" : ""}
-                            >
-                              <td className="ad-bulk-cell-num">{row.rowNumber}</td>
+                {parseResult?.warnings.map((message, i) => (
+                  <div key={i} className="ad-bulk-info ad-bulk-info--warn">
+                    {message}
+                  </div>
+                ))}
+
+                {validation && headers.length > 0 && (
+                  <div className="ad-bulk-preview-card">
+                    <div className="ad-bulk-summary">
+                      <div className="ad-bulk-summary-item">
+                        <span className="ad-bulk-summary-value">{summary.total}</span>
+                        <span className="ad-bulk-summary-label">Total rows</span>
+                      </div>
+                      <div className="ad-bulk-summary-item ad-bulk-summary-item--ok">
+                        <span className="ad-bulk-summary-value">{summary.valid}</span>
+                        <span className="ad-bulk-summary-label">Valid</span>
+                      </div>
+                      <div className="ad-bulk-summary-item ad-bulk-summary-item--err">
+                        <span className="ad-bulk-summary-value">{summary.invalid}</span>
+                        <span className="ad-bulk-summary-label">Invalid</span>
+                      </div>
+                    </div>
+
+                    <div className="ad-bulk-check-row">
+                      <label className="ad-bulk-check-label">
+                        <input
+                          type="checkbox"
+                          checked={showErrorsOnly}
+                          onChange={(e) => {
+                            setShowErrorsOnly(e.target.checked);
+                            setCurrentPage(1);
+                          }}
+                        />
+                        Show errors only
+                      </label>
+                    </div>
+
+                    {pageRows.length === 0 ? (
+                      <p className="ad-bulk-preview-note">No rows with errors.</p>
+                    ) : (
+                      <div className="ad-bulk-table-wrap">
+                        <table className="ad-bulk-table">
+                          <thead>
+                            <tr>
+                              <th className="ad-bulk-th-num">Row</th>
                               {headers.map((h) => (
-                                <td
-                                  key={h}
-                                  className={
-                                    row.errors.some((e) => e.field === h)
-                                      ? "ad-bulk-cell--invalid"
-                                      : ""
-                                  }
-                                >
-                                  {row.data[h]}
-                                </td>
+                                <th key={h}>{h}</th>
                               ))}
-                              <td className="ad-bulk-cell-errors">
-                                {row.errors.map((e, i) => (
-                                  <div key={i}>{e.message}</div>
-                                ))}
-                              </td>
+                              <th className="ad-bulk-th-errors">Errors</th>
                             </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                          </thead>
+                          <tbody>
+                            {pageRows.map((row) => {
+                              const isInvalid = row.errors.length > 0;
+                              return (
+                                <tr
+                                  key={row.rowNumber}
+                                  className={isInvalid ? "ad-bulk-table-row--invalid" : ""}
+                                >
+                                  <td className="ad-bulk-cell-num">{row.rowNumber}</td>
+                                  {headers.map((h) => (
+                                    <td
+                                      key={h}
+                                      className={
+                                        row.errors.some((e) => e.field === h)
+                                          ? "ad-bulk-cell--invalid"
+                                          : ""
+                                      }
+                                    >
+                                      {row.data[h]}
+                                    </td>
+                                  ))}
+                                  <td className="ad-bulk-cell-errors">
+                                    {row.errors.map((e, i) => (
+                                      <div key={i}>{e.message}</div>
+                                    ))}
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                    <div className="ad-bulk-pagination">
+                      <button
+                        type="button"
+                        className="ad-bulk-btn"
+                        onClick={() => setCurrentPage(Math.max(1, safePage - 1))}
+                        disabled={safePage <= 1}
+                      >
+                        Previous
+                      </button>
+                      <span className="ad-bulk-pagination-count">
+                        Page {safePage} of {totalPages}
+                      </span>
+                      <button
+                        type="button"
+                        className="ad-bulk-btn"
+                        onClick={() => setCurrentPage(Math.min(totalPages, safePage + 1))}
+                        disabled={safePage >= totalPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+
+                    <p className="ad-bulk-preview-note">
+                      Row numbers match your spreadsheet. Rows with errors are highlighted in red and the
+                      Errors column says what to fix.
+                    </p>
                   </div>
                 )}
 
-                <div className="ad-bulk-pagination">
-                  <button
-                    type="button"
-                    className="ad-bulk-btn"
-                    onClick={() => setCurrentPage(Math.max(1, safePage - 1))}
-                    disabled={safePage <= 1}
-                  >
-                    Previous
-                  </button>
-                  <span className="ad-bulk-pagination-count">
-                    Page {safePage} of {totalPages}
-                  </span>
-                  <button
-                    type="button"
-                    className="ad-bulk-btn"
-                    onClick={() => setCurrentPage(Math.min(totalPages, safePage + 1))}
-                    disabled={safePage >= totalPages}
-                  >
-                    Next
-                  </button>
-                </div>
-
-                <p className="ad-bulk-preview-note">
-                  Row numbers match your spreadsheet. Rows with errors are highlighted in red and the
-                  Errors column says what to fix.
-                </p>
-              </div>
-            )}
-
-            {continueMessage && (
-              <div className="ad-bulk-info ad-bulk-info--success">{continueMessage}</div>
-            )}
+                {continueMessage && (
+                  <div className="ad-bulk-info ad-bulk-info--success">{continueMessage}</div>
+                )}
               </>
             )}
             {isImporting && (
@@ -540,12 +616,159 @@ export default function AdminBulkData() {
             )}
           </div>
         ) : (
-          <div className="ad-bulk-export ad-bulk-empty">
-            <p>Export is not implemented yet.</p>
-            <p className="ad-bulk-empty-hint">
-              This placeholder will show the filters and the Export to CSV / Excel buttons in a
-              later phase.
-            </p>
+          <div className="ad-bulk-export">
+            <div className="ad-bulk-card">
+              <div className="ad-bulk-select">
+                <label className="ad-bulk-label" htmlFor="export-type">Record type</label>
+                <select
+                  id="export-type"
+                  className="ad-bulk-select-input"
+                  value={exportType}
+                  onChange={(e) => setExportType(e.target.value)}
+                  disabled={disabled}
+                >
+                  <option value="student">Students</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </div>
+
+              {/* ---- Filters ---- */}
+              <div className="ad-bulk-filters">
+                {exportType === "student" ? (
+                  <>
+                    <div className="ad-bulk-filter-field">
+                      <label className="ad-bulk-filter-label">Class</label>
+                      <select
+                        className="ad-bulk-filter-input"
+                        value={exportFilter}
+                        onChange={(e) => setExportFilter(e.target.value)}
+                        disabled={disabled}
+                      >
+                        <option value="">All classes</option>
+                      </select>
+                    </div>
+                    <div className="ad-bulk-filter-field">
+                      <label className="ad-bulk-filter-label">Gender</label>
+                      <select
+                        className="ad-bulk-filter-input"
+                        value={exportGender}
+                        onChange={(e) => setExportGender(e.target.value)}
+                        disabled={disabled}
+                      >
+                        <option value="">All genders</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="ad-bulk-filter-field">
+                      <label className="ad-bulk-filter-label">Role</label>
+                      <select
+                        className="ad-bulk-filter-input"
+                        value={exportFilter}
+                        onChange={(e) => setExportFilter(e.target.value)}
+                        disabled={disabled}
+                      >
+                        <option value="">All roles</option>
+                      </select>
+                    </div>
+                    <div className="ad-bulk-filter-field">
+                      <label className="ad-bulk-filter-label">Gender</label>
+                      <select
+                        className="ad-bulk-filter-input"
+                        value={exportGender}
+                        onChange={(e) => setExportGender(e.target.value)}
+                        disabled={disabled}
+                      >
+                        <option value="">All genders</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                      </select>
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="ad-bulk-export-info">
+                {exportLoading ? (
+                  <span className="ad-bulk-export-loading">Loading records…</span>
+                ) : (
+                  <span className="ad-bulk-export-count">
+                    {exportRecordCount} record{exportRecordCount !== 1 ? "s" : ""} match your filters
+                  </span>
+                )}
+              </div>
+
+              {exportRecordCount === 0 && !exportLoading && (
+                <p className="ad-bulk-export-note">No records match these filters.</p>
+              )}
+
+              {/* ---- Column picker ---- */}
+              <div className="ad-bulk-column-picker">
+                <label className="ad-bulk-label">Columns</label>
+                <div className="ad-bulk-column-actions">
+                  <button
+                    type="button"
+                    className="ad-bulk-btn"
+                    onClick={selectAllExportColumns}
+                    disabled={disabled || exportColumns.length >= prepareColumns(exportType).length}
+                  >
+                    Select all
+                  </button>
+                  <button
+                    type="button"
+                    className="ad-bulk-btn"
+                    onClick={clearExportColumns}
+                    disabled={disabled || exportColumns.length === 0}
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="ad-bulk-column-list">
+                  {prepareColumns(exportType).map((col) => (
+                    <label
+                      key={col}
+                      className={`ad-bulk-column-checkbox ${exportColumns.includes(col) ? "ad-bulk-column-checkbox--checked" : ""}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={exportColumns.includes(col)}
+                        onChange={() => toggleExportColumn(col)}
+                        disabled={disabled}
+                      />
+                      {col}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* ---- Format + Download ---- */}
+              <div className="ad-bulk-export-actions">
+                <div className="ad-bulk-format-select">
+                  <label className="ad-bulk-label" htmlFor="export-format">Format</label>
+                  <select
+                    id="export-format"
+                    className="ad-bulk-select-input"
+                    value={exportFormat}
+                    onChange={(e) => setExportFormat(e.target.value)}
+                    disabled={disabled || !canExport}
+                  >
+                    <option value="csv">CSV (.csv)</option>
+                    <option value="xlsx">Excel (.xlsx)</option>
+                  </select>
+                </div>
+                <button
+                  type="button"
+                  className={`ad-bulk-btn ad-bulk-btn--primary ${canExport ? "" : "ad-bulk-btn--disabled"}`}
+                  onClick={handleExportDownload}
+                  disabled={disabled || !canExport || exportLoading}
+                >
+                  {exportLoading ? "Building file…" : "Download"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
