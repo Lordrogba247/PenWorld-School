@@ -350,7 +350,7 @@ export default function AdminBulkData() {
               </div>
             </div>
 
-            {!showConfirm && !isImporting && bulk.step !== "results" && (
+            {!isImporting && bulk.step !== "results" && (
               <>
                 <DropzoneZone onDrop={handleDrop} fileName={fileName} onRemove={resetResult} />
 
