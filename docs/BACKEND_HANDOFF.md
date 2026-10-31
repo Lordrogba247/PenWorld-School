@@ -24,7 +24,7 @@ The frontend does not call any backend endpoint in Phase 1 or Phase 2. Everythin
    - Every cell is read as **text** so phone numbers keep leading zeros (e.g. `08031234567`).
    - Headers are trimmed and matched case-insensitively (spaces/underscores ignored).
 6. **Validation** runs in the browser via `zod` (`src/utils/bulkValidation.js`). Invalid rows are flagged with plain-English error messages and shown in a paginated preview table (25 rows/page).
-7. **"Continue with valid rows only"** shows a confirm step, then submits valid rows in batches of 100 to the backend via `src/services/bulkApi.js` (`importBatch`). Progress, cancel and a result summary are handled client-side. **Phase 3 calls the new bulk import endpoints below.**
+7. **"Import"** button submits valid rows in batches of 100 to the backend via `src/services/bulkApi.js` (`importBatch`). Progress, cancel and a result summary (with warnings) are handled client-side. **Phase 3 calls the new bulk import endpoints below.**
 8. **Export tab** lets the admin choose Students or Staff, filter by class/role and gender, pick columns, choose CSV or Excel format, and download. Data is read from the existing list endpoints (`GET /api/admin/students`, `GET /api/admin/staff`) via the project's axios instance. No new backend endpoints are needed for export.
 
 **Bottom line:** Phase 1 and Phase 2 are fully client-side. Phase 3 adds batched import submit to the new bulk import endpoints below. Phase 4 adds export using existing list endpoints. All filtering for export is done client-side (gender is not supported by the existing list endpoints).
@@ -41,7 +41,7 @@ The frontend sends one request per batch of 100 rows, sequentially. The URL depe
 - **Staff:** `POST /api/admin/staff/bulk`
 - **Auth:** Bearer token (admin role required)
 - **Content-Type:** `application/json`
-- **Body:** `{ "rows": [ {...}, {...} ] }` — each row object uses the field names below plus an internal `rowNumber` (added by the frontend so the backend can identify which rows failed). The backend should ignore `rowNumber` for storage; it only echoes it back in `failed`.
+- **Body:** `{ "rows": [ {...}, {...} ] }` — each row object uses the field names below **plus** an internal `rowNumber` field (added by the frontend so the backend can identify rows with warnings). The backend should **ignore `rowNumber` for storage**; it only echoes it back in `warnings`.
 
 Conventions copied from existing API:
 - Base URL path style: `/api/admin/...` (matches `/api/admin/students`, `/api/admin/staff`).
@@ -125,14 +125,14 @@ Conventions copied from existing API:
   "data": {
     "imported": 2,
     "updated": 0,
-    "failed": [],
+    "warnings": [],
     "totalRows": 2
   },
-  "message": "Bulk import complete. 2 row(s) imported, 0 updated, 0 failed."
+  "message": "Bulk import complete. 2 row(s) imported, 0 updated, 0 warnings\."
 }
 ```
 
-### Response with per-row errors (partial failure)
+### Response with per-row warnings \(data-quality issues\)
 
 ```json
 {
@@ -140,7 +140,7 @@ Conventions copied from existing API:
   "data": {
     "imported": 1,
     "updated": 0,
-    "failed": [
+    "warnings": [
       {
         "rowNumber": 3,
         "reason": "Duplicate studentId (also in row 2)"
@@ -152,7 +152,7 @@ Conventions copied from existing API:
     ],
     "totalRows": 4
   },
-  "message": "Bulk import complete. 1 row(s) imported, 0 updated, 2 failed."
+  "message": "Bulk import complete. 1 row(s) imported, 0 updated, 0 failed, 2 warning(s)."
 }
 ```
 
@@ -199,7 +199,7 @@ Notes:
 - `surname` + `otherNames` are the exact API field names (not `firstName`/`lastName`).
 - `studentClass` is the exact API create field name (filter param is `class`, but create body uses `studentClass`).
 - Phone fields must be stored as text, not number (leading zeros must survive).
-- The frontend adds an internal `rowNumber` to every row it sends so the backend can identify which rows failed; the backend echoes it back in `failed` and should not store it.
+- The frontend adds an internal `rowNumber` to every row it sends so the backend can identify which rows have warnings; the backend echoes it back in \`warnings\` and should not store it.
 
 ---
 
@@ -211,7 +211,7 @@ Notes:
 4. **Phone format:** Treat phone fields as text. Do not coerce to number (leading zeros must survive, e.g. `08031234567`). Accept Nigerian mobile format (`08031234567` or `+2348031234567`).
 5. **Date format:** `dateOfBirth` as `YYYY-MM-DD` text. Validate it is a real calendar date.
 6. **Error message style:** Return `reason` strings that are short and human-readable.
-7. **Partial failure:** If some rows fail, still import the valid ones and return `failed` with row numbers. Do not reject the whole batch because of one bad row.
+7. **Partial failure:** If some rows fail, still import the valid ones and return \`warnings\` with row numbers. Do not reject the whole batch because of one bad row.
 8. **Case-insensitive header matching:** The frontend already normalizes headers (trim, lowercase, strip spaces/underscores). Backend should be lenient too.
 
 ---
@@ -222,13 +222,13 @@ Notes:
 2. Should `studentClass` / `role` be validated against live meta data, or accepted as free text?
 3. For duplicate keys: should update overwrite all fields, or only fields present in the row?
 4. Are `guardianPhone` / `phone` expected to be stored exactly as text (no formatting)?
-5. Does a failed row abort the whole batch, or is partial import acceptable (frontend expects partial)?
+5. Does a warning row abort the whole batch, or is partial import acceptable (frontend expects partial)?
 6. Will you provide an export endpoint in a later phase, and what filters should it support (class, session, term, type)?
 7. Should the import endpoint require a specific admin role, or is any authenticated admin sufficient?
 
 ---
 
 **Files changed/created in Phases 1–3:**
-- Created: `src/utils/bulkParser.js`, `src/utils/bulkValidation.js`, `src/Portal/Admin/12BulkData.jsx`, `src/Portal/Admin/12BulkData.css`, `src/services/bulkApi.js`, `src/hooks/useBulkImport.js`
-- Edited: `src/App.jsx` (route `bulk-data`), `src/Portal/Admin/AdminLayout.jsx` (sidebar link), `src/Portal/Admin/12BulkData.jsx` (Phase 3 confirm/progress/results UI), `src/Portal/Admin/12BulkData.css` (Phase 3 styles), `package.json` (deps: `react-dropzone`, `papaparse`, `zod`)
+- Created: `src/utils/bulkParser.js`, `src/utils/bulkValidation.js`, `src/Portal/Admin/12BulkData.jsx`, `src/Portal/Admin/12BulkData.css (Phase 3 styles, Phase 4 export styles)`, `src/services/bulkApi.js`, `src/hooks/useBulkImport.js, src/utils/bulkExport.js`
+- Edited: `src/App.jsx` (route `bulk-data`), `src/Portal/Admin/AdminLayout.jsx` (sidebar link), `src/Portal/Admin/12BulkData.jsx` (Phase 3 confirm/progress/results UI, Phase 4 export UI, Phase 5 simplify to submit + warnings), `src/Portal/Admin/12BulkData.css (Phase 3 styles, Phase 4 export styles)` (Phase 3 styles), `package.json` (deps: `react-dropzone`, `papaparse`, `zod`)
 - No existing feature files were modified.

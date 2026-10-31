@@ -1,23 +1,24 @@
 // ===== Bulk import hook =====
-// Manages the confirm step, batched sequential import, progress, cancel and the
-// result summary screen. The component stays small and readable.
+// Manages the simple submit flow: upload → submit → import → results.
+// Client-side validation is informational only; backend accepts everything.
+// Progress, cancel and a result summary (with warnings) are handled client-side.
 import { useState, useCallback, useEffect, useRef } from "react";
 import { importBatch } from "../services/bulkApi";
 import Papa from "papaparse";
 
 const BATCH_SIZE = 100;
 
-export function useBulkImport({ type, validRows, invalidRows }) {
-  const [step, setStep] = useState("confirm"); // "confirm" | "importing" | "results"
+export function useBulkImport({ type, validRows }) {
+  const [step, setStep] = useState("ready"); // "ready" | "importing" | "results"
   const [importing, setImporting] = useState(false);
   const [progress, setProgress] = useState({
     done: 0,
     total: 0,
     imported: 0,
     updated: 0,
-    failed: 0,
+    warnings: 0,
   });
-  const [results, setResults] = useState(null); // { imported, updated, skipped, failed: [] }
+  const [results, setResults] = useState(null); // { imported, updated, warnings: [] }
   const [error, setError] = useState(null);
 
   const cancelRequestedRef = useRef(false);
@@ -29,11 +30,8 @@ export function useBulkImport({ type, validRows, invalidRows }) {
     validRows.forEach((r) => {
       map[r.rowNumber] = r;
     });
-    invalidRows.forEach((r) => {
-      map[r.rowNumber] = r.data;
-    });
     rowDataRef.current = map;
-  }, [validRows, invalidRows]);
+  }, [validRows]);
 
   const startImport = useCallback(async () => {
     cancelRequestedRef.current = false;
@@ -48,11 +46,11 @@ export function useBulkImport({ type, validRows, invalidRows }) {
       batches.push(validRows.slice(i, i + BATCH_SIZE));
     }
 
-    setProgress({ done: 0, total, imported: 0, updated: 0, failed: 0 });
+    setProgress({ done: 0, total, imported: 0, updated: 0, warnings: 0 });
 
     let imported = 0;
     let updated = 0;
-    let failed = [];
+    let warnings = [];
     let done = 0;
 
     for (const batch of batches) {
@@ -62,11 +60,11 @@ export function useBulkImport({ type, validRows, invalidRows }) {
         const res = await importBatch(type, batch);
         imported += res.imported;
         updated += res.updated;
-        failed.push(...res.failed);
+        warnings.push(...res.warnings);
       } catch (err) {
         // Whole batch request failed: mark every row in the batch as failed.
         batch.forEach((row) => {
-          failed.push({ rowNumber: row.rowNumber, reason: "Network error" });
+          warnings.push({ rowNumber: row.rowNumber, reason: "Network error" });
         });
       }
 
@@ -76,47 +74,40 @@ export function useBulkImport({ type, validRows, invalidRows }) {
         total,
         imported,
         updated,
-        failed: failed.length,
+        warnings: warnings.length,
       });
     }
 
     setImporting(false);
     setStep("results");
-    setResults({ imported, updated, skipped: invalidRows.length, failed });
-    setProgress({ done: total, total, imported, updated, failed: failed.length });
-  }, [type, validRows, invalidRows]);
+    setResults({ imported, updated, warnings });
+    setProgress({ done: total, total, imported, updated, warnings: warnings.length });
+  }, [type, validRows]);
 
   const cancelImport = useCallback(() => {
     cancelRequestedRef.current = true;
   }, []);
 
   const resetFlow = useCallback(() => {
-    setStep("confirm");
+    setStep("ready");
     setImporting(false);
     cancelRequestedRef.current = false;
     setResults(null);
     setError(null);
-    setProgress({ done: 0, total: 0, imported: 0, updated: 0, failed: 0 });
+    setProgress({ done: 0, total: 0, imported: 0, updated: 0, warnings: 0 });
   }, []);
 
   const downloadErrorReport = useCallback(() => {
-    const skipped = invalidRows.map((r) => ({
-      ...r.data,
-      rowNumber: r.rowNumber,
-      reason: r.errors.map((e) => e.message).join("; "),
-    }));
-
-    const failedRows = (results.failed || []).map((f) => {
-      const data = rowDataRef.current[f.rowNumber] || {};
-      return { ...data, rowNumber: f.rowNumber, reason: f.reason };
+    const warningRows = (results.warnings || []).map((w) => {
+      const data = rowDataRef.current[w.rowNumber] || {};
+      return { ...data, rowNumber: w.rowNumber, reason: w.reason };
     });
 
-    const all = [...skipped, ...failedRows];
-    if (all.length === 0) return;
+    if (warningRows.length === 0) return;
 
     // Prefix phone-like values with a tab so Excel keeps leading zeros
     // (e.g. 08031234567 stays 08031234567 instead of becoming 8031234567).
-    const processed = all.map((row) => {
+    const processed = warningRows.map((row) => {
       const out = {};
       for (const [key, value] of Object.entries(row)) {
         const text = String(value ?? "");
@@ -134,15 +125,14 @@ export function useBulkImport({ type, validRows, invalidRows }) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `bulk-import-error-report-${type}.csv`;
+    link.download = `bulk-import-warning-report-${type}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  }, [invalidRows, results, type]);
+  }, [results, type]);
 
-  const hasReportRows =
-    results != null && ((results.skipped || 0) > 0 || (results.failed || []).length > 0);
+  const hasReportRows = results != null && (results.warnings || []).length > 0;
 
   return {
     step,

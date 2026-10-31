@@ -4,7 +4,7 @@
 import api from "../api";
 
 // When true, the mock below runs instead of the real axios call.
-// Both paths return exactly the same shape: { imported, updated, failed: [{ rowNumber, reason }] }
+// Both paths return exactly the same shape: { imported, updated, warnings: [{ rowNumber, reason }] }
 export const USE_MOCK = true;
 
 // Endpoints mirror the existing admin URL style (/api/admin/students, /api/admin/staff).
@@ -19,10 +19,10 @@ const KEY_FIELD = {
   staff: "staffId",
 };
 
-// Mock failure reason per type so the failure flow can be tested.
-const FAIL_REASON = {
-  student: "Class not found",
-  staff: "Role not found",
+// Mock warning reason per type so the warning flow can be tested.
+const WARN_REASON = {
+  student: 'Class not recognised — assigned to first active class',
+  staff: 'Role not recognised — assigned to Teacher',
 };
 
 // In-memory "database" used only by the mock, pre-filled with a few existing records.
@@ -35,14 +35,14 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-// Every 25th row (by rowNumber) fails in the mock so the failure flow can be tested.
-function shouldMockFail(rowNumber) {
+// Every 25th row (by rowNumber) gets a warning in the mock so the warning flow can be tested.
+function shouldMockWarn(rowNumber) {
   return rowNumber % 25 === 0;
 }
 
-// Response shape: { imported: number, updated: number, failed: [{ rowNumber, reason }] }
+// Response shape: { imported: number, updated: number, warnings: [{ rowNumber, reason }] }
 export async function importBatch(type, rows) {
-  // Add rowNumber to every row so the backend can identify which rows failed.
+  // Add rowNumber to every row so the backend can identify rows with warnings.
   const rowsWithNumbers = rows.map((row, i) => ({
     ...row,
     rowNumber: row.rowNumber != null ? row.rowNumber : i + 1,
@@ -52,23 +52,17 @@ export async function importBatch(type, rows) {
     await delay(600);
     const existing = EXISTING_KEYS[type];
     const keyField = KEY_FIELD[type];
-    const failReason = FAIL_REASON[type];
+    const warnReason = WARN_REASON[type];
     let imported = 0;
     let updated = 0;
-    const failed = [];
+    const warnings = [];
 
     for (const row of rowsWithNumbers) {
-      if (shouldMockFail(row.rowNumber)) {
-        failed.push({ rowNumber: row.rowNumber, reason: failReason });
-        continue;
+      if (shouldMockWarn(row.rowNumber)) {
+        warnings.push({ rowNumber: row.rowNumber, reason: warnReason });
       }
 
       const key = String(row[keyField] ?? "").trim();
-      if (!key) {
-        failed.push({ rowNumber: row.rowNumber, reason: `Missing ${keyField}` });
-        continue;
-      }
-
       if (existing.has(key)) {
         updated += 1;
       } else {
@@ -77,15 +71,16 @@ export async function importBatch(type, rows) {
       }
     }
 
-    return { imported, updated, failed };
+    return { imported, updated, warnings };
   }
 
   // Real backend call. Reuses the project's axios instance (base URL + JWT interceptor).
+  // Backend imports everything; data-quality issues come back in warnings.
   const res = await api.post(ENDPOINT[type], { rows: rowsWithNumbers });
   const data = res.data && res.data.data ? res.data.data : res.data;
   return {
     imported: Number(data.imported ?? 0),
     updated: Number(data.updated ?? 0),
-    failed: Array.isArray(data.failed) ? data.failed : [],
+    warnings: Array.isArray(data.warnings) ? data.warnings : [],
   };
 }

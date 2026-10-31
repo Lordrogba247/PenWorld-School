@@ -95,7 +95,6 @@ export default function AdminBulkData() {
   const [currentPage, setCurrentPage] = useState(1);
   const [showErrorsOnly, setShowErrorsOnly] = useState(false);
   const [continueMessage, setContinueMessage] = useState("");
-  const [showConfirm, setShowConfirm] = useState(false);
 
   // ---- Export tab state ----
   const [exportType, setExportType] = useState("student"); // "student" | "staff"
@@ -111,7 +110,6 @@ export default function AdminBulkData() {
   const bulk = useBulkImport({
     type: formType,
     validRows: validation ? validation.validRows : [],
-    invalidRows: validation ? validation.invalidRows : [],
   });
 
   const resetResult = () => {
@@ -123,7 +121,6 @@ export default function AdminBulkData() {
     setCurrentPage(1);
     setShowErrorsOnly(false);
     setContinueMessage("");
-    setShowConfirm(false);
     bulk.resetFlow();
   };
 
@@ -135,7 +132,6 @@ export default function AdminBulkData() {
     setCurrentPage(1);
     setShowErrorsOnly(false);
     setContinueMessage("");
-    setShowConfirm(false);
 
     if (rejections.length > 0) {
       setFileName("");
@@ -180,18 +176,8 @@ export default function AdminBulkData() {
     resetResult();
   };
 
-  const handleContinue = () => {
+  const handleSubmit = () => {
     if (!validation || validation.validRows.length === 0) return;
-    setShowConfirm(true);
-    setContinueMessage("");
-  };
-
-  const handleBackFromConfirm = () => {
-    setShowConfirm(false);
-  };
-
-  const handleStartImport = () => {
-    setShowConfirm(false);
     bulk.startImport();
   };
 
@@ -356,36 +342,12 @@ export default function AdminBulkData() {
                 <button
                   type="button"
                   className="ad-bulk-btn ad-bulk-btn--primary"
-                  onClick={handleContinue}
+                  onClick={handleSubmit}
                   disabled={disabled || validCount === 0}
                 >
-                  Continue with valid rows only
+                  Import
                 </button>
               </div>
-
-              {showConfirm && (
-                <div className="ad-bulk-confirm">
-                  <p className="ad-bulk-confirm-title">
-                    You are about to import {validCount} {form.label.toLowerCase()}
-                  </p>
-                  <p className="ad-bulk-confirm-note">
-                    {validation.invalidRows.length} row(s) skipped because they were invalid.
-                  </p>
-                  <div className="ad-bulk-actions">
-                    <button type="button" className="ad-bulk-btn" onClick={handleBackFromConfirm} disabled={disabled}>
-                      Back
-                    </button>
-                    <button
-                      type="button"
-                      className="ad-bulk-btn ad-bulk-btn--primary"
-                      onClick={handleStartImport}
-                      disabled={disabled}
-                    >
-                      Start Import
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
 
             {!showConfirm && !isImporting && bulk.step !== "results" && (
@@ -553,19 +515,15 @@ export default function AdminBulkData() {
                     <span className="ad-bulk-result-value">{bulk.results.updated}</span>
                     <span className="ad-bulk-result-label">Updated</span>
                   </div>
-                  <div className="ad-bulk-result-card ad-bulk-result-card--skipped">
-                    <span className="ad-bulk-result-value">{bulk.results.skipped}</span>
-                    <span className="ad-bulk-result-label">Skipped (invalid)</span>
-                  </div>
-                  <div className="ad-bulk-result-card ad-bulk-result-card--failed">
-                    <span className="ad-bulk-result-value">{bulk.results.failed.length}</span>
-                    <span className="ad-bulk-result-label">Failed</span>
+                  <div className="ad-bulk-result-card ad-bulk-result-card--warnings">
+                    <span className="ad-bulk-result-value">{bulk.results.warnings.length}</span>
+                    <span className="ad-bulk-result-label">Warnings</span>
                   </div>
                 </div>
 
-                {(bulk.results.failed.length > 0 || bulk.results.skipped > 0) && (
+                {bulk.results.warnings.length > 0 && (
                   <>
-                    <h3 className="ad-bulk-results-subtitle">Failed rows</h3>
+                    <h3 className="ad-bulk-results-subtitle">Warning rows</h3>
                     <div className="ad-bulk-results-list">
                       <table className="ad-bulk-table">
                         <thead>
@@ -575,17 +533,10 @@ export default function AdminBulkData() {
                           </tr>
                         </thead>
                         <tbody>
-                          {bulk.results.skipped > 0 && (
-                            <tr>
-                              <td className="ad-bulk-cell-num" colSpan="2">
-                                {bulk.results.skipped} row(s) invalid in the file (see preview above).
-                              </td>
-                            </tr>
-                          )}
-                          {bulk.results.failed.map((f) => (
-                            <tr key={f.rowNumber}>
-                              <td className="ad-bulk-cell-num">{f.rowNumber}</td>
-                              <td>{f.reason}</td>
+                          {bulk.results.warnings.map((w) => (
+                            <tr key={w.rowNumber}>
+                              <td className="ad-bulk-cell-num">{w.rowNumber}</td>
+                              <td>{w.reason}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -597,7 +548,7 @@ export default function AdminBulkData() {
                         className="ad-bulk-btn ad-bulk-btn--primary"
                         onClick={bulk.downloadErrorReport}
                       >
-                        Download error report
+                        Download warning report
                       </button>
                     )}
                   </>
