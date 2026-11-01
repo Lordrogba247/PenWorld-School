@@ -22,14 +22,14 @@ export const BULK_FORMS = {
       "guardianEmail",
       "address",
     ],
-    required: ["studentId", "surname", "sex", "studentClass"],
+    required: ["studentId", "surname", "otherNames"],
     download: "bulk_students_template.csv",
   },
   staff: {
     label: "Staff",
     description: "Import staff (name, role, contact, subject, ...)",
     headers: ["staffId", "surname", "otherNames", "sex", "role", "email", "phone", "subject"],
-    required: ["staffId", "surname", "sex", "role"],
+    required: ["staffId", "surname", "otherNames"],
     download: "bulk_staff_template.csv",
   },
 };

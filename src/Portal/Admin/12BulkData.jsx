@@ -154,7 +154,22 @@ export default function AdminBulkData() {
         return;
       }
 
-      const checked = validateRows(formType, result.rows);
+      // Fetch live meta for class/role resolution
+      const token = localStorage.getItem("token");
+      let meta = null;
+      if (formType === "student") {
+        const res = await fetch(`${BASE_URL}/api/student/meta`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) meta = await res.json();
+      } else {
+        const res = await fetch(`${BASE_URL}/api/staff/meta`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) meta = await res.json();
+      }
+
+      const checked = validateRows(formType, result.rows, meta);
       setParseResult(result);
       setValidation(checked);
 
