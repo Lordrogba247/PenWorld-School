@@ -8,6 +8,9 @@ import { exportRows, prepareColumns } from "../../utils/bulkExport";
 
 import "./12BulkData.css";
 
+// Backend base URL (matches src/api.js baseURL).
+const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
+
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const PAGE_SIZE = 25;
 
