@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import "./3Student.css";
 import AddStudentModal from "./4Add";
 import { useMeta } from "../../hooks/useMeta";
+import { DIVISION_SUFFIX } from "../../hooks/useClasses.jsx";
 
 const BASE_URL = "https://penworld-gloryseed-demo-school-back.vercel.app";
 
@@ -24,29 +25,42 @@ export default function AdminStudentsList() {
 
     const token = localStorage.getItem("token");
 
-    const loadStudents = (cls) => {
+    const loadStudents = async (cls, retryWithBaseName = true) => {
         setLoading(true);
         setError("");
-        const url = cls
-            ? `${BASE_URL}/api/admin/students?class=${encodeURIComponent(cls)}`
-            : `${BASE_URL}/api/admin/students`;
-        fetch(url, {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-        })
-            .then((res) => {
-                if (!res.ok) throw new Error("Failed to load students.");
-                return res.json();
-            })
-            .then((result) => {
-                // Response shape: { success, data: [...] } — data is a plain array
-                setStudents(result.data || []);
-            })
-            .catch(() => {
-                setError("Failed to load students.");
-                setStudents([]);
-            })
-            .finally(() => setLoading(false));
+        try {
+            const url = cls
+                ? `${BASE_URL}/api/admin/students?class=${encodeURIComponent(cls)}`
+                : `${BASE_URL}/api/admin/students`;
+            const res = await fetch(url, {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` },
+            });
+            if (!res.ok) throw new Error("Failed to load students.");
+            const result = await res.json();
+            const students = result.data || [];
+
+            // If no students found and the class name has a division suffix
+            // (e.g. "JSS 1 Gaa-Akanbi"), retry without the suffix so students
+            // stored under the base class name are still found.
+            if (
+                students.length === 0 &&
+                retryWithBaseName &&
+                cls &&
+                DIVISION_SUFFIX.test(cls)
+            ) {
+                const baseName = cls.replace(DIVISION_SUFFIX, "");
+                await loadStudents(baseName, false);
+                return;
+            }
+
+            setStudents(students);
+        } catch {
+            setError("Failed to load students.");
+            setStudents([]);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => {

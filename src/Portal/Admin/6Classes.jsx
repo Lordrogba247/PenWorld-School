@@ -248,6 +248,20 @@ export default function AdminClasses() {
         const target = selectedDeleteClass;
         const idOrName = target?.id ?? target?.value ?? target?.name ?? deleteClassKey;
 
+        // Validate that we're sending a MongoDB ObjectId (24 hex chars), not a class name string.
+        // Classes without a backend _id will have id fall back to the class name,
+        // which causes "Cast to ObjectId failed" on the DELETE endpoint.
+        const OBJECT_ID_REGEX = /^[0-9a-fA-F]{24}$/;
+        if (!OBJECT_ID_REGEX.test(String(idOrName))) {
+            setDeleteError(
+                `Cannot delete "${selectedDeleteClass?.label || selectedDeleteClass?.name || idOrName}": ` +
+                "this class is missing a valid backend ID and cannot be deleted via the API. " +
+                "Please contact support to remove it from the database directly."
+            );
+            setDeleting(false);
+            return;
+        }
+
         setDeleting(true);
         setDeleteError("");
         try {
