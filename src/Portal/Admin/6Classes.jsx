@@ -246,52 +246,59 @@ export default function AdminClasses() {
         }
 
         const target = selectedDeleteClass;
-        const idOrName = target?.id ?? target?.value ?? target?.name ?? deleteClassKey;
 
-        // Validate that we're sending a MongoDB ObjectId (24 hex chars), not a class name string.
-        // Classes without a backend _id will have id fall back to the class name,
-        // which causes "Cast to ObjectId failed" on the DELETE endpoint.
-        const OBJECT_ID_REGEX = /^[0-9a-fA-F]{24}$/;
-        if (!OBJECT_ID_REGEX.test(String(idOrName))) {
-            setDeleteError(
-                `Cannot delete "${selectedDeleteClass?.label || selectedDeleteClass?.name || idOrName}": ` +
-                "this class is missing a valid backend ID and cannot be deleted via the API. " +
-                "Please contact support to remove it from the database directly."
-            );
-            setDeleting(false);
-            return;
-        }
+        // Prefer MongoDB _id when available, fall back to class name.
+        // URL-encode so class names with spaces/divisions (e.g. "JSS 1 Gaa-Akanbi")
+        // are transmitted safely in the path.
+        const classId = target?._id ?? target?.id ?? target?.name ?? deleteClassKey;
+        const url = `${CLASSES_ENDPOINT}/${encodeURIComponent(String(classId))}`;
 
         setDeleting(true);
         setDeleteError("");
         try {
-            // Try id-based delete first, fall back to name-based if backend expects that.
-            const candidates = [
-                `${CLASSES_ENDPOINT}/${encodeURIComponent(idOrName)}`,
-            ];
-            if (target?.name && String(target.name) !== String(idOrName)) {
-                candidates.push(`${CLASSES_ENDPOINT}/${encodeURIComponent(target.name)}`);
-            }
+            let res = await fetch(url, {
+                method: "DELETE",
+                headers: { "Authorization": `Bearer ${token}` },
+            });
 
-            let lastError = "";
-            let deleted = false;
-            for (const url of candidates) {
-                const res = await fetch(url, {
-                    method: "DELETE",
-                    headers: { "Authorization": `Bearer ${token}` },
-                });
+            // If blocked by enrolled students (400), ask user to force-delete.
+            if (res.status === 400) {
                 let data = null;
                 try { data = await res.json(); } catch { data = null; }
-                if (res.ok) { deleted = true; break; }
-                // If backend has no DELETE route at all, stop and surface a clear message.
-                if (res.status === 404 || res.status === 405) {
-                    lastError = data?.message || "Delete is not supported by the backend yet (no DELETE /api/admin/classes/:id route).";
-                    break;
+                const msg = data?.message || "";
+                if (msg.includes("student(s) are still enrolled") || msg.includes("students are still enrolled")) {
+                    const ok = window.confirm(
+                        `${msg}\n\nClick OK to delete the class and all its enrolled students.`
+                    );
+                    if (ok) {
+                        res = await fetch(`${url}?force=true`, {
+                            method: "DELETE",
+                            headers: { "Authorization": `Bearer ${token}` },
+                        });
+                    } else {
+                        setDeleteError("Deletion cancelled — class still has enrolled students.");
+                        setDeleting(false);
+                        return;
+                    }
                 }
-                lastError = data?.message || "Failed to delete class.";
             }
 
-            if (!deleted) throw new Error(lastError || "Failed to delete class.");
+            if (res.status === 404) {
+                let data = null;
+                try { data = await res.json(); } catch { data = null; }
+                setDeleteError(data?.message || "Class not found. It may have already been deleted.");
+                setDeleting(false);
+                return;
+            }
+
+            if (!res.ok) {
+                let data = null;
+                try { data = await res.json(); } catch { data = null; }
+                throw new Error(data?.message || "Failed to delete class.");
+            }
+
+            // Optional success payload
+            try { await res.json(); } catch {}
 
             setShowDeleteModal(false);
             setDeleteClassKey("");
