@@ -2,6 +2,7 @@
 // Single entry point for the whole app: importBatch(type, rows) -> Promise.
 // Set USE_MOCK = false to switch to the real backend (change one word).
 import api from "../api";
+import axios from "axios";
 
 // When true, the mock below runs instead of the real axios call.
 // Both paths return exactly the same shape: { imported, updated, warnings: [{ rowNumber, reason }] }
@@ -41,7 +42,7 @@ function shouldMockWarn(rowNumber) {
 }
 
 // Response shape: { imported: number, updated: number, warnings: [{ rowNumber, reason }] }
-export async function importBatch(type, rows) {
+export async function importBatch(type, rows, file = null) {
   // Add rowNumber to every row so the backend can identify rows with warnings.
   const rowsWithNumbers = rows.map((row, i) => ({
     ...row,
@@ -74,8 +75,29 @@ export async function importBatch(type, rows) {
     return { imported, updated, warnings };
   }
 
-  // Real backend call. Reuses the project's axios instance (base URL + JWT interceptor).
-  // Backend imports everything; data-quality issues come back in warnings.
+  // Real backend call.
+  // The backend can accept either:
+  //   - multipart/form-data with file field "excelFile" (backend parses it with xlsx)
+  //   - JSON { rows: [...] } (fallback; the fields were pre-parsed client-side)
+  if (file) {
+    const formData = new FormData();
+    formData.append("excelFile", file);
+    // Only include rows if they are non-empty (backend accepts JSON rows too)
+    if (rowsWithNumbers.length > 0) {
+      formData.append("rows", JSON.stringify(rowsWithNumbers));
+    }
+    const res = await api.post(ENDPOINT[type], formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    const data = res.data && res.data.data ? res.data.data : res.data;
+    return {
+      imported: Number(data.imported ?? 0),
+      updated: Number(data.updated ?? 0),
+      warnings: Array.isArray(data.warnings) ? data.warnings : [],
+    };
+  }
+
+  // JSON rows fallback (no file uploaded)
   const res = await api.post(ENDPOINT[type], { rows: rowsWithNumbers });
   const data = res.data && res.data.data ? res.data.data : res.data;
   return {
