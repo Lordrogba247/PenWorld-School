@@ -1,4 +1,4 @@
-// ===== Bulk import validation =====
+﻿// ===== Bulk import validation =====
 // Backend accepts everything; preview table only flags required fields,
 // hard duplicates, and structural problems. All other fields are accepted
 // as-is; problems become WARNINGS, never errors.

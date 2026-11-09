@@ -91,7 +91,6 @@ export default function AdminBulkData() {
   const [activeTab, setActiveTab] = useState("import");
   const [formType, setFormType] = useState("student");
   const [fileName, setFileName] = useState("");
-  const [pickedFile, setPickedFile] = useState(null);
   const [parseResult, setParseResult] = useState(null);
   const [validation, setValidation] = useState(null); // { results, validRows, invalidRows, summary }
   const [info, setInfo] = useState("");
@@ -114,7 +113,6 @@ export default function AdminBulkData() {
   const bulk = useBulkImport({
     type: formType,
     validRows: validation ? validation.validRows : [],
-    file: pickedFile,
   });
 
   const resetResult = () => {
@@ -148,7 +146,6 @@ export default function AdminBulkData() {
     if (!picked) return;
 
     setFileName(picked.name);
-    setPickedFile(picked);
     setInfo("Reading file ...");
 
     try {
@@ -199,7 +196,7 @@ export default function AdminBulkData() {
 
   const handleSubmit = () => {
     if (!validation || validation.validRows.length === 0) return;
-    bulk.startImport(pickedFile);
+    bulk.startImport();
   };
 
   const handleImportAnother = () => {

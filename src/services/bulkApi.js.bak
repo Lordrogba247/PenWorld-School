@@ -1,4 +1,4 @@
-// ===== Bulk import API =====
+﻿// ===== Bulk import API =====
 // Single entry point for the whole app: importBatch(type, rows) -> Promise.
 // Set USE_MOCK = false to switch to the real backend (change one word).
 import api from "../api";
@@ -22,8 +22,8 @@ const KEY_FIELD = {
 
 // Mock warning reason per type so the warning flow can be tested.
 const WARN_REASON = {
-  student: 'Class not recognised — assigned to first active class',
-  staff: 'Role not recognised — assigned to Teacher',
+  student: 'Class not recognised â€” assigned to first active class',
+  staff: 'Role not recognised â€” assigned to Teacher',
 };
 
 // In-memory "database" used only by the mock, pre-filled with a few existing records.
@@ -63,7 +63,7 @@ export async function importBatch(type, rows, file = null) {
         warnings.push({ rowNumber: row.rowNumber, reason: warnReason });
       }
 
-      const key = String(row[keyField] ?? "").trim();
+      const key = " // IDs auto-generated
       if (existing.has(key)) {
         updated += 1;
       } else {
@@ -106,3 +106,4 @@ export async function importBatch(type, rows, file = null) {
     warnings: Array.isArray(data.warnings) ? data.warnings : [],
   };
 }
+

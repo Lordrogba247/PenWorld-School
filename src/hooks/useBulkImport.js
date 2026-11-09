@@ -8,7 +8,7 @@ import Papa from "papaparse";
 
 const BATCH_SIZE = 100;
 
-export function useBulkImport({ type, validRows, file = null }) {
+export function useBulkImport({ type, validRows }) {
   const [step, setStep] = useState("ready"); // "ready" | "importing" | "results"
   const [importing, setImporting] = useState(false);
   const [progress, setProgress] = useState({
@@ -57,8 +57,7 @@ export function useBulkImport({ type, validRows, file = null }) {
       if (cancelRequestedRef.current) break;
 
       try {
-        // Pass the file so the backend can parse it with xlsx if needed
-        const res = await importBatch(type, batch, file);
+        const res = await importBatch(type, batch);
         imported += res.imported;
         updated += res.updated;
         warnings.push(...res.warnings);
@@ -83,7 +82,7 @@ export function useBulkImport({ type, validRows, file = null }) {
     setStep("results");
     setResults({ imported, updated, warnings });
     setProgress({ done: total, total, imported, updated, warnings: warnings.length });
-  }, [type, validRows, file]);
+  }, [type, validRows]);
 
   const cancelImport = useCallback(() => {
     cancelRequestedRef.current = true;
