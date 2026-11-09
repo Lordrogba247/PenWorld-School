@@ -56,23 +56,7 @@ if (data.studentClass !== undefined && data.studentClass !== "") {
     else warnings.push({ field: "studentClass", message: "Class not recognised; stored as-is" });
   }
 
-  if (data.dateOfBirth !== undefined && data.dateOfBirth !== "") {
-    const text = String(data.dateOfBirth).trim();
-    const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (!match) { warnings.push({ field: "dateOfBirth", message: "Invalid date; stored as null" }); data.dateOfBirth = null; }
-    else {
-      const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
-      const date = new Date(year, month - 1, day);
-      if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
-        warnings.push({ field: "dateOfBirth", message: "Not a real date; stored as null" });
-        data.dateOfBirth = null;
-      } else data.dateOfBirth = text;
-    }
-  }
-
-  if (data.guardianPhone !== undefined) data.guardianPhone = String(data.guardianPhone).trim();
-  if (data.guardianEmail !== undefined) data.guardianEmail = String(data.guardianEmail).trim().toLowerCase();
-  if (data.address !== undefined) data.address = String(data.address).trim();
+ 
 
   return { errors, warnings, data };
 }
@@ -108,9 +92,6 @@ function validateStaffRow(row, meta) {
     else warnings.push({ field: "role", message: "Role not recognised; stored as-is" });
   }
 
-  if (data.email !== undefined) data.email = String(data.email).trim().toLowerCase();
-  if (data.phone !== undefined) data.phone = String(data.phone).trim();
-  if (data.subject !== undefined) data.subject = String(data.subject).trim();
 
   return { errors, warnings, data };
 }

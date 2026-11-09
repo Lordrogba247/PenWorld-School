@@ -34,11 +34,7 @@ function prepareColumns(type) {
       "otherNames",
       "sex",
       "studentClass",
-      "dateOfBirth",
-      "guardianName",
-      "guardianPhone",
-      "guardianEmail",
-      "address",
+
     ],
     staff: [
       "staffId",
@@ -46,9 +42,6 @@ function prepareColumns(type) {
       "otherNames",
       "sex",
       "role",
-      "email",
-      "phone",
-      "subject",
     ],
   };
   return importHeaders[type] || [];
@@ -66,11 +59,6 @@ function normalizeRecord(type, record) {
     out.studentId = record.studentId || record.id || "";
     out.studentClass = record.studentClass || record.class || "";
     out.sex = record.sex === "M" ? "Male" : record.sex === "F" ? "Female" : record.sex || "";
-    out.dateOfBirth = record.dateOfBirth || "";
-    out.guardianName = record.guardianName || "";
-    out.guardianPhone = record.guardianPhone || record.phone || "";
-    out.guardianEmail = record.guardianEmail || record.email || "";
-    out.address = record.address || "";
     // Split combined "name" into surname / otherNames.
     const nameParts = (record.name || "").trim().split(/\s+/);
     out.surname = nameParts[0] || "";
@@ -80,9 +68,6 @@ function normalizeRecord(type, record) {
     out.staffId = record.staffId || record.id || "";
     out.role = record.role || "";
     out.sex = record.sex === "M" ? "Male" : record.sex === "F" ? "Female" : record.sex || "";
-    out.email = record.email || "";
-    out.phone = record.phone || "";
-    out.subject = record.subject || "";
     const nameParts = (record.name || "").trim().split(/\s+/);
     out.surname = nameParts[0] || "";
     out.otherNames = nameParts.slice(1).join(" ") || "";
