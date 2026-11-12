@@ -1,8 +1,22 @@
 // ===== Batch processing =====
 const bcrypt = require('bcryptjs');
 
+const User = require('../models/User');
+const Student = require('../models/Student');
+const Teacher = require('../models/Teacher');
 const { buildClassCatalog } = require('../utils/batchProcessor');
 const { validateStudentRow, validateStaffRow } = require('./validation');
+
+const DEFAULT_PASSWORD = 'bulkimport';
+const ACADEMIC_SESSION = '2026/2027';
+
+// Drop undefined / null / empty values so missing optional columns
+// never overwrite existing data or create empty strings.
+function clean(obj) {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined && v !== null && v !== '')
+  );
+}
 
 /**
  * Process student rows
@@ -12,16 +26,11 @@ async function processStudentRows(rows) {
   const updated = [];
   const failed = [];
   const warnings = [];
-  let successCount = 0;
-  let failCount = 0;
 
-  const { classMap, activeClasses, fallbackClass } = await buildClassCatalog();
+  const { classMap, fallbackClass } = await buildClassCatalog();
 
-  const User = require('../models/User');
-  const existingStudents = await User.find({
-    role: 'student',
-    studentId: { $exists: true, $ne: null }
-  }).select('studentId');
+  // Hash once instead of once per row (much faster for big files).
+  const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
@@ -29,37 +38,138 @@ async function processStudentRows(rows) {
     const { valid, errors, data } = validateStudentRow(row, rowNumber);
 
     if (!valid) {
-      failCount++;
       failed.push({
         rowNumber,
-        reason: errors.join('; ')
+        reason: errors.join('; '),
       });
       continue;
     }
 
-    const existingStudent = await User.findOne({
-      studentId: data.studentId,
-      role: 'student'
-    });
+    // Resolve the class (fall back to the first active class if not found).
+    const className = String(data.studentClass || '').trim();
+    let classDoc = classMap.get(className.toUpperCase());
+
+    if (!classDoc) {
+      if (!fallbackClass) {
+        failed.push({
+          rowNumber,
+          reason: `Class "${className}" not found and no active class is available`,
+        });
+        continue;
+      }
+      classDoc = fallbackClass;
+      warnings.push({
+        rowNumber,
+        reason: `Class "${className}" not recognised - assigned to first active class`,
+      });
+    }
+
+    const fullName = `${data.surname} ${data.otherNames}`.trim();
+
+    let existingStudent;
+    try {
+      existingStudent = await User.findOne({
+        studentId: data.studentId,
+        role: 'student',
+      });
+    } catch (err) {
+      failed.push({
+        rowNumber,
+        reason: `Failed to look up student: ${err.message}`,
+      });
+      continue;
+    }
 
     if (existingStudent) {
+      // ---- Update existing student ----
       try {
-        await User.findByIdAndUpdate(existingStudent._id, {
-          firstName: data.surname,
-          lastName: data.otherNames,
-          sex: data.sex,
-          email: data.guardianEmail || '',
-          phone: data.guardianPhone || '',
-          guardianName: data.guardianName,
-          guardianPhone: data.guardianPhone,
-          guardianEmail: data.guardianEmail,
-        });
+        await User.findByIdAndUpdate(
+          existingStudent._id,
+          clean({
+            firstName: data.surname,
+            lastName: data.otherNames,
+            sex: data.sex,
+            email: data.guardianEmail,
+            phone: data.guardianPhone,
+            guardianName: data.guardianName,
+            guardianPhone: data.guardianPhone,
+            guardianEmail: data.guardianEmail,
+          })
+        );
 
-        const Student = require('../models/Student');
         await Student.findOneAndUpdate(
           { user: existingStudent._id },
           {
-            class: classMap.get(data.studentClass.toUpperCase())._id,
+            class: classDoc._id,
+            academicSession: ACADEMIC_SESSION,
+            updatedAt: new Date(),
+          }
+        );
+
+        updated.push({
+          _id: existingStudent._id,
+          studentId: data.studentId,
+          name: fullName,
+        });
+      } catch (err) {
+        failed.push({
+          rowNumber,
+          reason: `Failed to update: ${err.message}`,
+        });
+      }
+    } else {
+      // ---- Create new student ----
+      let savedUser = null;
+      try {
+        const userData = clean({
+          firstName: data.surname,
+          lastName: data.otherNames,
+          sex: data.sex,
+          studentId: data.studentId,
+          role: 'student',
+          email: data.guardianEmail,
+          phone: data.guardianPhone,
+          guardianName: data.guardianName,
+          guardianPhone: data.guardianPhone,
+          guardianEmail: data.guardianEmail,
+          password: passwordHash,
+        });
+
+        savedUser = await new User(userData).save();
+
+        await new Student({
+          user: savedUser._id,
+          studentId: data.studentId,
+          class: classDoc._id,
+          academicSession: ACADEMIC_SESSION,
+        }).save();
+
+        imported.push({
+          _id: savedUser._id,
+          studentId: data.studentId,
+          name: fullName,
+        });
+      } catch (err) {
+        // Avoid leaving a User behind without its Student profile.
+        if (savedUser) {
+          await User.findByIdAndDelete(savedUser._id).catch(() => { });
+        }
+        failed.push({
+          rowNumber,
+          reason: `Failed to import: ${err.message}`,
+        });
+      }
+    }
+  }
+
+  return {
+    imported: imported.length,
+    updated: updated.length,
+    failed,
+    warnings,
+    totalRows: rows.length,
+  };
+}
 
 /**
  * Process staff rows
@@ -69,16 +179,11 @@ async function processStaffRows(rows) {
   const updated = [];
   const failed = [];
   const warnings = [];
-  let successCount = 0;
-  let failCount = 0;
 
-  const { classMap, activeClasses, fallbackClass } = await buildClassCatalog();
+  const { classMap, fallbackClass } = await buildClassCatalog();
 
-  const User = require('../models/User');
-  const existingStaff = await User.find({
-    role: { $in: ['teacher', 'admin'] },
-    staffId: { $exists: true, $ne: null }
-  }).select('staffId');
+  // Hash once instead of once per row.
+  const passwordHash = await bcrypt.hash(DEFAULT_PASSWORD, 10);
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
@@ -86,15 +191,15 @@ async function processStaffRows(rows) {
     const { valid, errors, data } = validateStaffRow(row, rowNumber);
 
     if (!valid) {
-      failCount++;
       failed.push({
         rowNumber,
-        reason: errors.join('; ')
+        reason: errors.join('; '),
       });
       continue;
     }
 
-    const roleLower = data.role.toLowerCase();
+    const rawRole = String(data.role || '').trim();
+    const roleLower = rawRole.toLowerCase();
     let userRole;
     let department;
     let classId = null;
@@ -106,42 +211,68 @@ async function processStaffRows(rows) {
       userRole = 'admin';
       department = null;
     } else if (roleLower.startsWith('class teacher')) {
-      const className = data.role.replace(/^class teacher\s+/i, '').trim();
+      const className = rawRole.replace(/^class teacher\s+/i, '').trim();
+      userRole = 'teacher';
+
       if (classMap.has(className.toUpperCase())) {
-        userRole = 'teacher';
         department = `Class Teacher - ${className}`;
         classId = classMap.get(className.toUpperCase())._id;
       } else {
-        userRole = 'teacher';
         department = 'General';
         if (fallbackClass) {
+          classId = fallbackClass._id;
           warnings.push({
             rowNumber,
-            reason: `Role class "${className}" not found - assigned to first active class`
+            reason: `Role class "${className}" not found - assigned to first active class`,
+          });
+        } else {
+          warnings.push({
+            rowNumber,
+            reason: `Role class "${className}" not found - assigned as General teacher`,
           });
         }
       }
     } else {
+      // Unknown role (e.g. Bursar, Librarian, Principal) -> treated as a Teacher.
       userRole = 'teacher';
       department = 'General';
+      warnings.push({
+        rowNumber,
+        reason: `Role "${rawRole}" not recognised - assigned to Teacher`,
+      });
     }
 
-    const existingStaffUser = await User.findOne({
-      staffId: data.staffId,
-      role: { $in: ['teacher', 'admin'] }
-    });
+    const fullName = `${data.surname} ${data.otherNames}`.trim();
+
+    let existingStaffUser;
+    try {
+      existingStaffUser = await User.findOne({
+        staffId: data.staffId,
+        role: { $in: ['teacher', 'admin'] },
+      });
+    } catch (err) {
+      failed.push({
+        rowNumber,
+        reason: `Failed to look up staff: ${err.message}`,
+      });
+      continue;
+    }
 
     if (existingStaffUser) {
+      // ---- Update existing staff ----
       try {
-        await User.findByIdAndUpdate(existingStaffUser._id, {
-          firstName: data.surname,
-          lastName: data.otherNames,
-          sex: data.sex,
-          email: data.email,
-          phone: data.phone,
-        });
+        await User.findByIdAndUpdate(
+          existingStaffUser._id,
+          clean({
+            firstName: data.surname,
+            lastName: data.otherNames,
+            sex: data.sex,
+            email: data.email,
+            phone: data.phone,
+          })
+        );
 
-        const Teacher = require('../models/Teacher');
+        // Admins have no Teacher profile, so this simply matches nothing for them.
         await Teacher.findOneAndUpdate(
           { user: existingStaffUser._id },
           {
@@ -155,20 +286,19 @@ async function processStaffRows(rows) {
         updated.push({
           _id: existingStaffUser._id,
           staffId: data.staffId,
-          name: existingStaffUser.fullName,
+          name: fullName,
         });
-
-        successCount++;
       } catch (err) {
-        failCount++;
         failed.push({
           rowNumber,
-          reason: `Failed to update: ${err.message}`
+          reason: `Failed to update: ${err.message}`,
         });
       }
     } else {
+      // ---- Create new staff ----
+      let savedUser = null;
       try {
-        const userData = {
+        const userData = clean({
           firstName: data.surname,
           lastName: data.otherNames,
           sex: data.sex,
@@ -176,43 +306,36 @@ async function processStaffRows(rows) {
           role: userRole,
           email: data.email,
           phone: data.phone,
-        };
+          password: passwordHash,
+        });
 
-        const defaultPassword = 'bulkimport';
-        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-        userData.password = hashedPassword;
+        savedUser = await new User(userData).save();
 
-        const newUser = new require('../models/User')(userData);
-        const savedUser = await newUser.save();
-
-        if (userRole === 'admin') {
-          // Admin - no Teacher profile needed
-        } else {
-          const Teacher = require('../models/Teacher');
-          const teacherData = {
+        // Admins don't need a Teacher profile.
+        if (userRole !== 'admin') {
+          await new Teacher({
             user: savedUser._id,
             staffId: data.staffId,
             role: userRole,
             department,
-            classes: userRole === 'teacher' && classId ? [classId] : [],
+            classes: classId ? [classId] : [],
             subjects: data.subject ? [data.subject] : [],
-          };
-
-          const newTeacher = new Teacher(teacherData);
-          await newTeacher.save();
+          }).save();
         }
 
-        successCount++;
         imported.push({
           _id: savedUser._id,
           staffId: data.staffId,
-          name: `${savedUser.firstName} ${savedUser.lastName}`,
+          name: fullName,
         });
       } catch (err) {
-        failCount++;
+        // Avoid leaving a User behind without its Teacher profile.
+        if (savedUser) {
+          await User.findByIdAndDelete(savedUser._id).catch(() => { });
+        }
         failed.push({
           rowNumber,
-          reason: `Failed to import: ${err.message}`
+          reason: `Failed to import: ${err.message}`,
         });
       }
     }
@@ -221,87 +344,10 @@ async function processStaffRows(rows) {
   return {
     imported: imported.length,
     updated: updated.length,
-    failed: failed,
+    failed,
     warnings,
     totalRows: rows.length,
   };
 }
 
 module.exports = { processStudentRows, processStaffRows };
-
-            academicSession: '2026/2027',
-            updatedAt: new Date(),
-          }
-        );
-
-        updated.push({
-          _id: existingStudent._id,
-          studentId: data.studentId,
-          name: existingStudent.fullName,
-        });
-
-        successCount++;
-      } catch (err) {
-        failCount++;
-        failed.push({
-          rowNumber,
-          reason: `Failed to update: ${err.message}`
-        });
-      }
-    } else {
-      try {
-        const userData = {
-          firstName: data.surname,
-          lastName: data.otherNames,
-          sex: data.sex,
-          studentId: data.studentId,
-          role: 'student',
-          email: data.guardianEmail || '',
-          phone: data.guardianPhone || '',
-          guardianName: data.guardianName,
-          guardianPhone: data.guardianPhone,
-          guardianEmail: data.guardianEmail,
-        };
-
-        const defaultPassword = 'bulkimport';
-        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
-        userData.password = hashedPassword;
-
-        const newUser = new require('../models/User')(userData);
-        const savedUser = await newUser.save();
-
-        const Student = require('../models/Student');
-        const studentData = {
-          user: savedUser._id,
-          studentId: data.studentId,
-          class: classMap.get(data.studentClass.toUpperCase())._id,
-          academicSession: '2026/2027',
-        };
-
-        const newStudent = new Student(studentData);
-        await newStudent.save();
-
-        successCount++;
-        imported.push({
-          _id: savedUser._id,
-          studentId: data.studentId,
-          name: `${savedUser.firstName} ${savedUser.lastName}`,
-        });
-      } catch (err) {
-        failCount++;
-        failed.push({
-          rowNumber,
-          reason: `Failed to import: ${err.message}`
-        });
-      }
-    }
-  }
-
-  return {
-    imported: imported.length,
-    updated: updated.length,
-    failed: failed,
-    warnings,
-    totalRows: rows.length,
-  };
-}
