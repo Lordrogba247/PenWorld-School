@@ -1,0 +1,153 @@
+// Script to write the batchProcessor.js file
+import fs from 'fs';
+import path from 'path';
+
+const content = `
+
+// ===== Batch processing =====
+const bcrypt = require('bcryptjs');
+
+const { buildClassCatalog } = require('./batchProcessor');
+const { validateStudentRow, validateStaffRow } = require('./validation');
+
+/**
+ * Process student rows
+ */
+async function processStudentRows(rows) {
+  const imported = [];
+  const updated = [];
+  const failed = [];
+  const warnings = [];
+  let successCount = 0;
+  let failCount = 0;
+
+  const { classMap, activeClasses, fallbackClass } = await buildClassCatalog();
+
+  const User = require('../models/User');
+  const existingStudents = await User.find({
+    role: 'student',
+    studentId: { $exists: true, $ne: null }
+  }).select('studentId');
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const rowNumber = row.rowNumber || i + 1;
+    const { valid, errors, data } = validateStudentRow(row, rowNumber);
+
+    if (!valid) {
+      failCount++;
+      failed.push({
+        rowNumber,
+        reason: errors.join('; ')
+      });
+      continue;
+    }
+
+    const existingStudent = await User.findOne({
+      studentId: data.studentId,
+      role: 'student'
+    });
+
+    if (existingStudent) {
+      try {
+        await User.findByIdAndUpdate(existingStudent._id, {
+          firstName: data.surname,
+          lastName: data.otherNames,
+          sex: data.sex,
+          email: data.guardianEmail || '',
+          phone: data.guardianPhone || '',
+          guardianName: data.guardianName,
+          guardianPhone: data.guardianPhone,
+          guardianEmail: data.guardianEmail,
+        });
+
+        const Student = require('../models/Student');
+        await Student.findOneAndUpdate(
+          { user: existingStudent._id },
+          {
+            class: classMap.get(data.studentClass.toUpperCase())._id,
+            academicSession: '2026/2027',
+            updatedAt: new Date(),
+          }
+        );
+
+        updated.push({
+          _id: existingStudent._id,
+          studentId: data.studentId,
+          name: existingStudent.fullName,
+        });
+
+        successCount++;
+      } catch (err) {
+        failCount++;
+        failed.push({
+          rowNumber,
+          reason: \\`Failed to update: ${err.message}\\\
+        });
+      }
+    } else {
+      try {
+        const userData = {
+          firstName: data.surname,
+          lastName: data.otherNames,
+          sex: data.sex,
+          studentId: data.studentId,
+          role: 'student',
+          email: data.guardianEmail || '',
+          phone: data.guardianPhone || '',
+          guardianName: data.guardianName,
+          guardianPhone: data.guardianPhone,
+          guardianEmail: data.guardianEmail,
+        };
+
+        const defaultPassword = 'bulkimport';
+        const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+        userData.password = hashedPassword;
+
+        const newUser = new require('../models/User')(userData);
+        const savedUser = await newUser.save();
+
+        const Student = require('../models/Student');
+        const studentData = {
+          user: savedUser._id,
+          studentId: data.studentId,
+          class: classMap.get(data.studentClass.toUpperCase())._id,
+          academicSession: '2026/2027',
+        };
+
+        const newStudent = new Student(studentData);
+        await newStudent.save();
+
+        successCount++;
+        imported.push({
+          _id: savedUser._id,
+          studentId: data.studentId,
+          name: \\`${savedUser.firstName} ${savedUser.lastName}\\\`,
+        });
+      } catch (err) {
+        failCount++;
+        failed.push({
+          rowNumber,
+          reason: \\`Failed to import: ${err.message}\\\
+        });
+      }
+    }
+  }
+
+  return {
+    imported: imported.length,
+    updated: updated.length,
+    failed: failed,
+    warnings,
+    totalRows: rows.length,
+  };
+}
+
+module.exports = { processStudentRows };
+`;
+
+// Write to file
+const filePath = path.join(__dirname, 'backend', 'utils', 'batchProcessor.js');
+fs.writeFileSync(filePath, content, 'utf-8');
+
+console.log('File written successfully');
