@@ -47,6 +47,7 @@ function normaliseResponse(res) {
     imported: Number(data.imported ?? 0),
     updated: Number(data.updated ?? 0),
     warnings: Array.isArray(data.warnings) ? data.warnings : [],
+    failed: Array.isArray(data.failed) ? data.failed : [],
   };
 }
 
@@ -88,9 +89,11 @@ export async function importBatch(type, rows, file = null) {
   }
 
   // Real backend call.
-  // The backend can accept either:
-  //   - multipart/form-data with file field "excelFile" (backend parses it with xlsx)
-  //   - JSON { rows: [...] } (fallback; the fields were pre-parsed client-side)
+  // The backend accepts:
+  //   - JSON { type: 'students'|'staff', rows: [...] }
+  //   - multipart/form-data with excelFile (legacy file upload)
+  //   - JSON { rows: [...] } as fallback
+
   if (file) {
     const formData = new FormData();
     formData.append("excelFile", file);
@@ -104,6 +107,7 @@ export async function importBatch(type, rows, file = null) {
   }
 
   // JSON rows fallback (no file uploaded)
-  const res = await api.post(ENDPOINT[type], { rows: rowsWithNumbers });
+  // Backend expects: { type: 'students'|'staff', rows: [...] }
+  const res = await api.post(ENDPOINT[type], { type, rows: rowsWithNumbers });
   return normaliseResponse(res);
 }

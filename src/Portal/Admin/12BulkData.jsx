@@ -158,18 +158,17 @@ export default function AdminBulkData() {
       }
 
       // Fetch live meta for class/role resolution
+      // Backend only exposes /api/admin/meta (shared for both students and staff)
+      // The meta data contains classOptions, roles, sessions, etc.
       const token = localStorage.getItem("token");
       let meta = null;
-      if (formType === "student") {
-        const res = await fetch(`${BASE_URL}/api/student/meta`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) meta = await res.json();
+      const metaRes = await fetch(`${BASE_URL}/api/admin/meta`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (metaRes.ok) {
+        meta = await metaRes.json();
       } else {
-        const res = await fetch(`${BASE_URL}/api/staff/meta`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.ok) meta = await res.json();
+        setInfo("Failed to load class/role metadata. Check console for details.");
       }
 
       const checked = validateRows(formType, result.rows, meta);
