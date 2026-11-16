@@ -1,11 +1,11 @@
 ﻿// ===== Bulk import API =====
 // Single entry point for the whole app: importBatch(type, rows) -> Promise.
-// Set USE_MOCK = false to switch to the real backend (change one word).
+// Set USE_MOCK = false to switch to the real backend.
 import api from "../api";
 
 // When true, the mock below runs instead of the real API call.
 // Both paths return exactly the same shape: { imported, updated, warnings: [{ rowNumber, reason }] }
-export const USE_MOCK = true;
+export const USE_MOCK = false;
 
 // Endpoints mirror the existing admin URL style (/api/admin/students, /api/admin/staff).
 const ENDPOINT = {
